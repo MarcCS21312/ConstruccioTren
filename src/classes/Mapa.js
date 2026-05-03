@@ -43,6 +43,18 @@ export class Mapa {
   }
 
   /**
+   * Reinicia el mapa segons una definició inicial (matriu de tipus).
+   * @param {Array<Array<string>>} mapaInicial
+   */
+  reiniciar(mapaInicial) {
+    this.caselles = mapaInicial.map((fila) => fila.map((tipus) => new Casella(tipus)))
+    this.mida = {
+      files: this.caselles.length,
+      columnes: this.caselles[0]?.length ?? 0
+    }
+  }
+
+  /**
    * Troba la primera posició d'una casella d'un tipus concret.
    * @param {string} tipusBuscat
    * @returns {{fila:number, columna:number}|null}
