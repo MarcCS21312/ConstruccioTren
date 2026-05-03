@@ -18,12 +18,13 @@ export class Casella {
     this.tipus = nouTipus
   }
 
-
   /**
-   * Retorna true si la casella ya contiene un rail.
+   * Indica si la casella es construible (terreno plano).
    * @returns {boolean}
    */
-  teRail() {
-    return this.tipus === TIPOS_CASILLA.RAIL
+  esConstruible() {
+    return this.tipus === TIPOS_CASILLA.PLA
   }
+
+
 }
