@@ -20,4 +20,16 @@ export class Nivell {
       rails: limitsAccions.rails ?? railsInicials
     }
   }
+
+  /**
+   * Retorna l'estat inicial del nivell (clonat per evitar mutacions externes).
+   * @returns {{mapaInicial:Array<Array<string>>, railsInicials:number, limitsAccions:Object}}
+   */
+  iniciarNivell() {
+    return {
+      mapaInicial: this.mapaInicial.map((fila) => [...fila]),
+      railsInicials: this.railsInicials,
+      limitsAccions: { ...this.limitsAccions }
+    }
+  }
 }

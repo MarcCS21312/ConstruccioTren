@@ -17,4 +17,12 @@ export class Mapa {
     }
   }
 
+  /**
+   * Normalitza l'entrada a instancies de `Casella`.
+   * @private
+   */
+  normalitzarCaselles(caselles) {
+    return caselles.map((fila) => fila.map((casella) => casella instanceof Casella ? casella : new Casella(casella)))
+  }
+
 }
