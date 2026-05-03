@@ -16,6 +16,23 @@ export class Jugador {
   }
 
   /**
+   * Tala un arbre (casella de bosc) i aporta 1 rail.
+   * Resta una unitat al límit de tales.
+   * @param {Casella} casella
+   * @returns {boolean} true si l'acció s'ha aplicat
+   */
+  talarArbre(casella) {
+    if (!casella || casella.tipus !== TIPOS_CASILLA.BOSC || this.talesDisponibles <= 0) {
+      return false
+    }
+
+    casella.canviarTipus(TIPOS_CASILLA.PLA)
+    this.talesDisponibles -= 1
+    this.rails += 1
+    return true
+  }
+
+  /**
    * Coloca un rail en una casella plana consumiendo 1 rail del inventario.
    * @param {Casella} casella
    * @returns {boolean}
