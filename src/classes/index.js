@@ -1,0 +1,7 @@
+export { Casella } from './Casella.js'
+export { Mapa } from './Mapa.js'
+export { Jugador } from './Jugador.js'
+export { Nivell } from './Nivell.js'
+export { SistemaEstrelles } from './SistemaEstrelles.js'
+export { Joc } from './Joc.js'
+export { TIPOS_CASILLA } from './tiposCasella.js'
