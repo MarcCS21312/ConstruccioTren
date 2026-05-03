@@ -33,6 +33,22 @@ export class Jugador {
   }
 
   /**
+   * Destrueix un obstacle i passa a ser terreny pla.
+   * Resta una unitat al límit de destruccions.
+   * @param {Casella} casella
+   * @returns {boolean}
+   */
+  destruirObstacle(casella) {
+    if (!casella || casella.tipus !== TIPOS_CASILLA.OBSTACLE || this.destruccionsDisponibles <= 0) {
+      return false
+    }
+
+    casella.canviarTipus(TIPOS_CASILLA.PLA)
+    this.destruccionsDisponibles -= 1
+    return true
+  }
+
+  /**
    * Coloca un rail en una casella plana consumiendo 1 rail del inventario.
    * @param {Casella} casella
    * @returns {boolean}
