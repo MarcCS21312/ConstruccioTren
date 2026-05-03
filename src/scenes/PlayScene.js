@@ -31,18 +31,13 @@ export class PlayScene extends Phaser.Scene {
     console.log('Joc iniciat:', this.joc)
     const casellaBosc = this.joc.mapa.obtenirCasella(0, 2)
     const casellaObstacle = this.joc.mapa.obtenirCasella(1, 1)
-    const casellaPla = this.joc.mapa.obtenirCasella(0, 1)
-    const casellaPla1 = this.joc.mapa.obtenirCasella(0, 2)
-    const casellaPla2 = this.joc.mapa.obtenirCasella(0, 3)
 
     this.joc.jugador.talarArbre(casellaBosc)
     this.joc.jugador.destruirObstacle(casellaObstacle)
-    this.joc.jugador.colocarRail(casellaPla)
-    this.joc.jugador.colocarRail(casellaPla1)
-    this.joc.jugador.colocarRail(casellaPla2)
+    this.joc.colocarRailEn(0, 1)
+    this.joc.colocarRailEn(0, 2)
+    this.joc.colocarRailEn(0, 3)
 
-    this.estadoPartida = this.joc.finalitzarPartida(3)
-    console.log('Estado de partida:', this.estadoPartida)
   }
 
   update() {
