@@ -1,4 +1,4 @@
-import { TIPOS_CASILLA } from './tiposCasella.js'
+import { TIPOS_CASILLA } from '../constants/tiposCasella.js'
 
 /**
  * Representa una casella del mapa.

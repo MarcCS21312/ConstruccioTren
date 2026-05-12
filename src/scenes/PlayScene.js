@@ -1,17 +1,9 @@
 import Phaser from 'phaser';
 import { Joc, Nivell, TIPOS_CASILLA } from '../classes/index.js';
+import { COLORS_CASELLA } from '../constants/colors.js';
+import { NIVELL_PROVA } from '../config/nivells.js';
 
 const MIDA_CASELLA = 80
-
-const COLORS_CASELLA = {
-  [TIPOS_CASILLA.PLA]:      0x90EE90,
-  [TIPOS_CASILLA.BOSC]:     0x228B22,
-  [TIPOS_CASILLA.OBSTACLE]: 0x808080,
-  [TIPOS_CASILLA.AIGUA]:    0x4169E1,
-  [TIPOS_CASILLA.RAIL]:     0x8B4513,
-  [TIPOS_CASILLA.INICI]:    0xFFD700,
-  [TIPOS_CASILLA.META]:     0xFF4500,
-}
 
 export class PlayScene extends Phaser.Scene {
   constructor() {
@@ -21,22 +13,7 @@ export class PlayScene extends Phaser.Scene {
   preload() {}
 
   create() {
-    const mapaInicial = [
-      [TIPOS_CASILLA.INICI, TIPOS_CASILLA.PLA, TIPOS_CASILLA.BOSC, TIPOS_CASILLA.PLA, TIPOS_CASILLA.META],
-      [TIPOS_CASILLA.PLA, TIPOS_CASILLA.OBSTACLE, TIPOS_CASILLA.PLA, TIPOS_CASILLA.BOSC, TIPOS_CASILLA.PLA],
-      [TIPOS_CASILLA.PLA, TIPOS_CASILLA.PLA, TIPOS_CASILLA.PLA, TIPOS_CASILLA.PLA, TIPOS_CASILLA.PLA]
-    ]
-
-    this.nivell = new Nivell({
-      nom: 'Nivell de prova',
-      mapaInicial,
-      railsInicials: 2,
-      limitsAccions: {
-        tales: 1,
-        destruccions: 1,
-        rails: 2
-      }
-    })
+    this.nivell = new Nivell(NIVELL_PROVA)
 
     this.joc = new Joc().iniciarJoc(this.nivell)
 

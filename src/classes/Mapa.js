@@ -1,5 +1,5 @@
 import { Casella } from './Casella.js'
-import { TIPOS_CASILLA } from './tiposCasella.js'
+import { TIPOS_CASILLA } from '../constants/tiposCasella.js'
 
 const DIRECCIONS = [
   [1, 0],

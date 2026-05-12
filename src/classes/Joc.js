@@ -2,7 +2,7 @@ import { Jugador } from './Jugador.js'
 import { Mapa } from './Mapa.js'
 import { SistemaEstrelles } from './SistemaEstrelles.js'
 import { Nivell } from './Nivell.js'
-import { TIPOS_CASILLA } from './tiposCasella.js'
+import { TIPOS_CASILLA } from '../constants/tiposCasella.js'
 
 /**
  * Classe principal que organitza l'estat del joc per nivell.
