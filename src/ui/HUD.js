@@ -42,7 +42,7 @@ export class HUD {
    */
   actualitzar(jugador) {
     this.txtPico.setText(`⛏️ Pico: ${jugador.destruccionsDisponibles}`)
-    this.txtDestral.setText(`🪓 Destral: ${jugador.talesDisponibles}`)
+    this.txtDestral.setText(`🪓 Hacha: ${jugador.talesDisponibles}`)
     this.txtRails.setText(`🛤️ Rail: ${jugador.rails}`)
   }
 }
