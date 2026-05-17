@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { Joc, Nivell, TIPOS_CASILLA } from '../classes/index.js';
 import { COLORS_CASELLA } from '../constants/colors.js';
 import { NIVELL_PROVA } from '../config/nivells.js';
+import { UI_COLORS, UI_DEPTH, UI_STYLES } from '../constants/ui.js';
 
 const MIDA_CASELLA = 80
 
@@ -75,12 +76,39 @@ export class PlayScene extends Phaser.Scene {
       case TIPOS_CASILLA.OBSTACLE:
         this.joc.jugador.destruirObstacle(casella)
         break
-      case TIPOS_CASILLA.PLA:
-        this.joc.colocarRailEn(fila, columna)
-        break
+      case TIPOS_CASILLA.PLA: {
+        const resultat = this.joc.colocarRailEn(fila, columna)
+        this.dibuixarMapa()
+        if (resultat.victoria) {
+          this.mostrarResultat(true, resultat.estrelles)
+        } else if (resultat.derrota) {
+          this.mostrarResultat(false)
+        }
+        return
+      }
     }
 
     this.dibuixarMapa()
+  }
+
+  mostrarResultat(victoria, estrelles = 0) {
+    const cx = this.scale.width / 2
+    const cy = this.scale.height / 2
+
+    this.add.rectangle(cx, cy, this.scale.width, this.scale.height, UI_COLORS.OVERLAY, UI_COLORS.OVERLAY_ALPHA)
+      .setDepth(UI_DEPTH.OVERLAY)
+
+    const titol = victoria ? 'VICTÒRIA!' : 'DERROTA!'
+    const color = victoria ? UI_COLORS.VICTORIA : UI_COLORS.DERROTA
+
+    this.add.text(cx, cy - 50, titol, { ...UI_STYLES.TITOL_RESULTAT, color })
+      .setOrigin(0.5).setDepth(UI_DEPTH.TEXT)
+
+    if (victoria) {
+      const estrellaTxt = '★'.repeat(estrelles) + '☆'.repeat(3 - estrelles)
+      this.add.text(cx, cy + 30, estrellaTxt, UI_STYLES.ESTRELLES)
+        .setOrigin(0.5).setDepth(UI_DEPTH.TEXT)
+    }
   }
 
   update() {}

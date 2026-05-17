@@ -1,12 +1,15 @@
 /**
- * Sistema simple de càlcul d'estrelles segons eficiència.
+ * Sistema de càlcul d'estrelles basat en llindars d'accions predefinits per nivell.
+ * llindars[0] = màxim d'accions per obtenir 3★
+ * llindars[1] = màxim d'accions per obtenir 2★
+ * Qualsevol victòria per sobre dels llindars dona 1★.
  */
 export class SistemaEstrelles {
   /**
-   * @param {number} [criteriBase=3] - valor base d'accions ideals per 3 estrelles
+   * @param {[number, number]} llindars - [max accions 3★, max accions 2★]
    */
-  constructor(criteriBase = 3) {
-    this.criteriBase = criteriBase
+  constructor(llindars = [3, 5]) {
+    this.llindars = llindars
     this.estrellesObtingudes = 0
   }
 
@@ -15,22 +18,20 @@ export class SistemaEstrelles {
    * @param {Object} params
    * @param {boolean} params.victoria
    * @param {number} [params.accionsUsades=0]
-   * @param {number} [params.accionsIdeals=this.criteriBase]
-   * @param {number} [params.recursosRestants=0]
    * @returns {number} 0..3 estrelles
    */
-  calcularEstrelles({ victoria, accionsUsades = 0, accionsIdeals = this.criteriBase, recursosRestants = 0 }) {
+  calcularEstrelles({ victoria, accionsUsades = 0 }) {
     if (!victoria) {
       this.estrellesObtingudes = 0
       return 0
     }
 
-    if (accionsUsades <= accionsIdeals && recursosRestants > 0) {
+    if (accionsUsades <= this.llindars[0]) {
       this.estrellesObtingudes = 3
       return 3
     }
 
-    if (accionsUsades <= accionsIdeals + 2) {
+    if (accionsUsades <= this.llindars[1]) {
       this.estrellesObtingudes = 2
       return 2
     }

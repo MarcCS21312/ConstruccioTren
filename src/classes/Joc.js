@@ -14,6 +14,7 @@ export class Joc {
     this.jugador = null
     this.mapa = null
     this.sistemaEstrelles = new SistemaEstrelles()
+    this.accionsUsades = 0
     this.estat = 'inactiu'
   }
 
@@ -40,6 +41,8 @@ export class Joc {
     if (!placed) {
       return { success: false, error: 'no_pot_colocar' }
     }
+
+    this.accionsUsades++
 
     // Comprovar si amb aquest rail s'ha aconseguit la victòria
     if (this.comprovarVictoria()) {
@@ -81,6 +84,8 @@ export class Joc {
       estatNivell.limitsAccions.tales,
       estatNivell.limitsAccions.destruccions
     )
+    this.sistemaEstrelles = new SistemaEstrelles(estatNivell.llindarsEstrelles)
+    this.accionsUsades = 0
     this.estat = 'jugant'
 
     return this
@@ -100,12 +105,10 @@ export class Joc {
 
   /**
    * Finalitza la partida i calcula les estrelles obtingudes.
-   * @param {number} [accionsUsades=0]
    * @returns {{victoria:boolean, estrelles:number}}
    */
-  finalitzarPartida(accionsUsades = 0) {
+  finalitzarPartida() {
     const victoria = this.comprovarVictoria()
-    const recursosRestants = this.jugador?.rails ?? 0
 
     this.estat = victoria ? 'victoria' : 'derrota'
 
@@ -113,8 +116,7 @@ export class Joc {
       victoria,
       estrelles: this.sistemaEstrelles.calcularEstrelles({
         victoria,
-        accionsUsades,
-        recursosRestants
+        accionsUsades: this.accionsUsades
       })
     }
   }
