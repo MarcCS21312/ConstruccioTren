@@ -8,6 +8,7 @@ export const NIVELL_PROVA = {
     [TIPOS_CASILLA.PLA, TIPOS_CASILLA.PLA, TIPOS_CASILLA.PLA, TIPOS_CASILLA.PLA, TIPOS_CASILLA.PLA]
   ],
   railsInicials: 2,
+  llindarsEstrelles: [3, 5],
   limitsAccions: {
     tales: 1,
     destruccions: 1,

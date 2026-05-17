@@ -3,6 +3,7 @@ import { Joc, Nivell, TIPOS_CASILLA } from '../classes/index.js';
 import { COLORS_CASELLA } from '../constants/colors.js';
 import { NIVELL_PROVA } from '../config/nivells.js';
 import { UI_COLORS, UI_DEPTH, UI_STYLES } from '../constants/ui.js';
+import { HUD } from '../ui/HUD.js';
 
 const MIDA_CASELLA = 80
 
@@ -24,6 +25,8 @@ export class PlayScene extends Phaser.Scene {
 
     this.graphics = this.add.graphics()
     this.dibuixarMapa()
+    this.hud = new HUD(this, this.offsetY)
+    this.hud.actualitzar(this.joc.jugador)
 
     this.input.on('pointerdown', this.onClic, this)
   }
@@ -79,6 +82,7 @@ export class PlayScene extends Phaser.Scene {
       case TIPOS_CASILLA.PLA: {
         const resultat = this.joc.colocarRailEn(fila, columna)
         this.dibuixarMapa()
+        this.hud.actualitzar(this.joc.jugador)
         if (resultat.victoria) {
           this.mostrarResultat(true, resultat.estrelles)
         } else if (resultat.derrota) {
@@ -89,6 +93,7 @@ export class PlayScene extends Phaser.Scene {
     }
 
     this.dibuixarMapa()
+    this.hud.actualitzar(this.joc.jugador)
   }
 
   mostrarResultat(victoria, estrelles = 0) {
