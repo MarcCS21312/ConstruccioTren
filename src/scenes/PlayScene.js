@@ -13,8 +13,10 @@ export class PlayScene extends Phaser.Scene {
   preload() {}
 
   create() {
-    this.nivell = new Nivell(NIVELL_PROVA)
+    // 1. Piquem un fons sòlid fosc per netejar la pantalla del Menú vell
+    this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x111111).setOrigin(0);
 
+    this.nivell = new Nivell(NIVELL_PROVA)
     this.joc = new Joc().iniciarJoc(this.nivell)
 
     const { files, columnes } = this.joc.mapa.mida
@@ -24,7 +26,46 @@ export class PlayScene extends Phaser.Scene {
     this.graphics = this.add.graphics()
     this.dibuixarMapa()
 
-    this.input.on('pointerdown', this.onClic, this)
+    // Clics al mapa (canviat a 'pointerup' per seguretat amb les transicions)
+    this.input.on('pointerup', this.onClic, this)
+
+    // ==========================================
+    // SISTEMA DE PAUSA
+    // ==========================================
+
+    // A. Escuchar la tecla ESCAPE
+    this.input.keyboard.on('keydown-ESC', () => {
+        this.activarPausa();
+    });
+
+    // B. Crear el botó petit de pausa (emoticona ⏸) a la cantonada superior dreta
+    this.botoPausaPetit = this.add.text(this.scale.width - 40, 40, '⏸', {
+        fontSize: '28px',
+        fontFamily: 'Arial, sans-serif',
+        fill: '#ffffff',
+        backgroundColor: '#222222',
+        padding: { x: 12, y: 8 }
+    }).setOrigin(0.5);
+
+    // Activen interactivitat amb la maneta de selecció
+    this.botoPausaPetit.setInteractive({ useHandCursor: true });
+    
+    // Canvi de color estil hover (opcional, li dona un toc maco)
+    this.botoPausaPetit.on('pointerover', () => this.botoPausaPetit.setStyle({ fill: '#60a5fa' }));
+    this.botoPausaPetit.on('pointerout', () => this.botoPausaPetit.setStyle({ fill: '#ffffff' }));
+
+    // Executar la pausa en fer clic al botó
+    this.botoPausaPetit.on('pointerup', () => {
+        this.activarPausa();
+    });
+  }
+
+  /**
+   * Atura l'escena actual de joc i llança la capa de pausa a sobre.
+   */
+  activarPausa() {
+      this.scene.pause();
+      this.scene.launch('PauseScene'); // 'launch' manté la PlayScene visible al fons
   }
 
   /**
@@ -51,13 +92,14 @@ export class PlayScene extends Phaser.Scene {
 
   /**
    * Detecta el clic del ratolí, identifica la fila/columna i executa l'acció corresponent.
-   * - BOSC → jugador.talarArbre
-   * - OBSTACLE → jugador.destruirObstacle
-   * - PLA → joc.colocarRailEn
-   * @param {Phaser.Input.Pointer} pointer
    */
   onClic(pointer) {
     if (this.joc.estat !== 'jugant') return
+
+    // Evitem que el clic s'accioni si l'usuari ha clicat exactament a sobre del botó de pausa
+    // Calculant la distància entre el ratolí i el botó petit
+    const distanciaAlBotoPausa = Phaser.Math.Distance.Between(pointer.x, pointer.y, this.botoPausaPetit.x, this.botoPausaPetit.y);
+    if (distanciaAlBotoPausa < 30) return;
 
     const { files, columnes } = this.joc.mapa.mida
     const columna = Math.floor((pointer.x - this.offsetX) / MIDA_CASELLA)
