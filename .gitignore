@@ -22,3 +22,17 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# macOS
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# Thumbnails Windows
+Thumbs.db
+ehthumbs.db
+
+# Build / env
+*.env
+*.env.local
