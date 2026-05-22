@@ -1,5 +1,6 @@
 import { TIPOS_CASILLA } from '../constants/tiposCasella.js'
 
+// nivel de pruebas; sirve de plantilla para futuros niveles definidos en datos
 export const NIVELL_PROVA = {
   nom: 'Nivell de prova',
   mapaInicial: [

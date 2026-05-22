@@ -1,52 +1,63 @@
 import Phaser from 'phaser';
 import { Button } from '../classes/Boto.js';
+import { UI_STYLES } from '../constants/ui.js';
 
+const BTN_H_EST = 44
+const BTN_GAP   = 24
+
+/** Escena overlay que pausa PlayScene y ofrece continuar, reiniciar o salir al menú */
 export class PauseScene extends Phaser.Scene {
-    constructor() {
-        super({ key: 'PauseScene' });
-    }
+  constructor() {
+    super({ key: 'PauseScene' });
+  }
 
-    create() {
-        const { width, height } = this.scale;
-        const cx = width / 2;
-        const cy = height / 2;
+  create() {
+    const { width, height } = this.scale;
+    const cx = width  / 2;
+    const cy = height / 2;
 
-        this.add.rectangle(0, 0, width, height, 0x000000, 0.65).setOrigin(0);
+    // fondo semitransparente que oscurece la PlayScene pausada de fondo
+    this.add.rectangle(0, 0, width, height, 0x000000, 0.88).setOrigin(0);
 
-        this.add.text(cx, cy - 90, 'JOC EN PAUSA', {
-            fontSize: '40px',
-            fontFamily: 'Arial, sans-serif',
-            fontWeight: 'bold',
-            fill: '#ffffff'
-        }).setOrigin(0.5);
+    this.add.text(cx, height * 0.28, 'JUEGO EN PAUSA', UI_STYLES.TITOL_ESCENA)
+      .setOrigin(0.5)
+      .setResolution(window.devicePixelRatio || 2);
 
-        new Button(this, cx, cy + 10, 'REPRENDRE', 0x3b82f6, 0x60a5fa, () => {
-            this.treurePausa();
-        });
+    const botoConfigs = [
+      { label: 'CONTINUAR',        color: 0x3b82f6, hover: 0x60a5fa, cb: () => this.treurePausa()     },
+      { label: 'REINICIAR NIVEL',  color: 0xf59e0b, hover: 0xfbbf24, cb: () => this.reiniciarNivell() },
+      { label: 'MENÚ PRINCIPAL',   color: 0x6b7280, hover: 0x9ca3af, cb: () => this.anarAlMenu()      },
+    ];
 
-        new Button(this, cx, cy + 90, 'REINICIAR NIVELL', 0xf59e0b, 0xfbbf24, () => {
-            this.reiniciarNivell();
-        });
+    // textos fuera de pantalla para medir el ancho real y uniformar todos los botones
+    const tmpTxts = botoConfigs.map(cfg => this.add.text(-9999, -9999, cfg.label, UI_STYLES.BOTO_TEXT));
+    const maxW    = Math.max(...tmpTxts.map(t => t.width)) + 40;
+    tmpTxts.forEach(t => t.destroy());
 
-        new Button(this, cx, cy + 170, 'MENÚ PRINCIPAL', 0x6b7280, 0x9ca3af, () => {
-            this.anarAlMenu();
-        });
+    // distribuye los botones verticalmente centrados en pantalla
+    const totalH = botoConfigs.length * BTN_H_EST + (botoConfigs.length - 1) * BTN_GAP;
+    const startY = cy - totalH / 2 + BTN_H_EST / 2;
 
-        this.input.keyboard.on('keydown-ESC', () => this.treurePausa());
-    }
+    botoConfigs.forEach((cfg, i) => {
+      new Button(this, cx, startY + i * (BTN_H_EST + BTN_GAP), cfg.label, cfg.color, cfg.hover, cfg.cb, maxW);
+    });
 
-    reiniciarNivell() {
-        this.scene.stop('PauseScene');
-        this.scene.start('PlayScene');
-    }
+    // keyup (no keydown) para no capturar el mismo ESC que abrió la escena
+    this.input.keyboard.on('keyup-ESC', () => this.treurePausa());
+  }
 
-    treurePausa() {
-        this.scene.resume('PlayScene');
-        this.scene.stop('PauseScene');
-    }
+  reiniciarNivell() {
+    this.scene.stop('PauseScene');
+    this.scene.start('PlayScene');
+  }
 
-    anarAlMenu() {
-        this.scene.stop('PlayScene');
-        this.scene.start('MenuScene');
-    }
+  treurePausa() {
+    this.scene.resume('PlayScene');
+    this.scene.stop('PauseScene');
+  }
+
+  anarAlMenu() {
+    this.scene.stop('PlayScene');
+    this.scene.start('MenuScene');
+  }
 }

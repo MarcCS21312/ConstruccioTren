@@ -1,13 +1,4 @@
-/**
- * Constantes con los tipos de casilla del mapa.
- * - `PLA`: terreno plano, construible
- * - `BOSC`: casella de bosc, tala posible
- * - `OBSTACLE`: obstacle, destruible
- * - `AIGUA`: aigua, inmutable i inaccessble
- * - `RAIL`: rail ja col·locat
- * - `INICI`: punt d'inici
- * - `META`: punt de meta
- */
+// tipos de terreno del mapa; los valores son strings para depurar mejor en consola
 export const TIPOS_CASILLA = {
   PLA: 'pla',
   BOSC: 'bosc',

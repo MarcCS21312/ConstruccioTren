@@ -1,6 +1,7 @@
 import { Casella } from './Casella.js'
 import { TIPOS_CASILLA } from '../constants/tiposCasella.js'
 
+// vecinos ortogonales (sin diagonales) usados en la búsqueda de camino
 const DIRECCIONS = [
   [1, 0],
   [-1, 0],
@@ -8,14 +9,8 @@ const DIRECCIONS = [
   [0, -1]
 ]
 
-/**
- * Representa el mapa del nivell com una matriu de `Casella`.
- * Provee metodes de consulta i validació de camí.
- */
+/** Matriz de Casella con consultas, búsqueda de posición y validación de camino */
 export class Mapa {
-  /**
-   * @param {Array<Array<string|Casella>>} caselles - Matriu inicial (tipus o instancies de Casella)
-   */
   constructor(caselles = []) {
     this.caselles = this.normalitzarCaselles(caselles)
     this.mida = {
@@ -24,28 +19,16 @@ export class Mapa {
     }
   }
 
-  /**
-   * Normalitza l'entrada a instancies de `Casella`.
-   * @private
-   */
+  // acepta tanto strings de tipo como instancias Casella ya creadas
   normalitzarCaselles(caselles) {
     return caselles.map((fila) => fila.map((casella) => casella instanceof Casella ? casella : new Casella(casella)))
   }
 
-  /**
-   * Retorna la casella a la posició indicada o `null` si no existeix.
-   * @param {number} fila
-   * @param {number} columna
-   * @returns {Casella|null}
-   */
+  /** @returns {Casella|null} */
   obtenirCasella(fila, columna) {
     return this.caselles[fila]?.[columna] ?? null
   }
 
-  /**
-   * Reinicia el mapa segons una definició inicial (matriu de tipus).
-   * @param {Array<Array<string>>} mapaInicial
-   */
   reiniciar(mapaInicial) {
     this.caselles = mapaInicial.map((fila) => fila.map((tipus) => new Casella(tipus)))
     this.mida = {
@@ -54,11 +37,7 @@ export class Mapa {
     }
   }
 
-  /**
-   * Troba la primera posició d'una casella d'un tipus concret.
-   * @param {string} tipusBuscat
-   * @returns {{fila:number, columna:number}|null}
-   */
+  /** @returns {{fila:number, columna:number}|null} */
   trobarPosicio(tipusBuscat) {
     for (let fila = 0; fila < this.caselles.length; fila += 1) {
       for (let columna = 0; columna < this.caselles[fila].length; columna += 1) {
@@ -67,16 +46,9 @@ export class Mapa {
         }
       }
     }
-
     return null
   }
 
-  /**
-   * Conta quantes caselles hi ha d'un tipus determinat.
-   * Útil per comprovar si encara hi ha `BOSC` disponibles per talar.
-   * @param {string} tipus
-   * @returns {number}
-   */
   contarTipus(tipus) {
     let comptador = 0
     for (let fila = 0; fila < this.caselles.length; fila += 1) {
@@ -86,15 +58,11 @@ export class Mapa {
         }
       }
     }
-
     return comptador
   }
 
-  /**
-   * Comprova si existeix un camí de rails que connecti `INICI` amb `META`.
-   * Utilitza cerca per amplitud (BFS) sobre caselles amb `RAIL`, `INICI` o `META`.
-   * @returns {boolean}
-   */
+  // BFS sobre casillas conectadas (RAIL, INICIO, META) buscando la meta desde el inicio
+  /** @returns {boolean} */
   comprovarCami() {
     const inici = this.trobarPosicio(TIPOS_CASILLA.INICI)
     const meta = this.trobarPosicio(TIPOS_CASILLA.META)
@@ -103,6 +71,7 @@ export class Mapa {
       return false
     }
 
+    // estructuras de la búsqueda en anchura
     const visitades = new Set()
     const cua = [inici]
 
@@ -116,10 +85,12 @@ export class Mapa {
 
       visitades.add(clau)
 
+      // condición de éxito: hemos llegado a la meta
       if (actual.fila === meta.fila && actual.columna === meta.columna) {
         return true
       }
 
+      // explora los 4 vecinos ortogonales y encola los conectables
       for (const [deltaFila, deltaColumna] of DIRECCIONS) {
         const novaFila = actual.fila + deltaFila
         const novaColumna = actual.columna + deltaColumna

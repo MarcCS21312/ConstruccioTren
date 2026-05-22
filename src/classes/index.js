@@ -1,8 +1,10 @@
+// barrel: agrupa las exportaciones del dominio del juego para imports más cortos
 export { Casella } from './Casella.js'
 export { Mapa } from './Mapa.js'
 export { Jugador } from './Jugador.js'
 export { Nivell } from './Nivell.js'
 export { SistemaEstrelles } from './SistemaEstrelles.js'
+export { SistemaCrafteig } from './SistemaCrafteig.js'
 export { Joc } from './Joc.js'
 export { Button } from './Boto.js'
 export { TIPOS_CASILLA } from '../constants/tiposCasella.js'

@@ -1,3 +1,10 @@
+// estilos, colores y profundidades de UI compartidos por todas las escenas
+// stroke solo por encima de 30px; por debajo usar shadow (evita desenfoque en texto pequeño)
+const FF = 'Arial, sans-serif'
+
+const SHADOW_SM = { offsetX: 1, offsetY: 1, color: '#000000', blur: 3, fill: true }
+
+// paleta: colores generales, HUD y escena de crafteo
 export const UI_COLORS = {
   OVERLAY: 0x000000,
   OVERLAY_ALPHA: 0.6,
@@ -8,31 +15,99 @@ export const UI_COLORS = {
   HUD_RAILS: '#c8a84b',
   HUD_TALES: '#5dbb63',
   HUD_PICO: '#e07b54',
+  CRAFTING_BG: 0x1e1b4b,
+  CRAFTING_CARD_OK: 0x1e3a5f,
+  CRAFTING_CARD_KO: 0x3b1f1f,
+  CRAFTING_OK: '#4ade80',
+  CRAFTING_KO: '#f87171',
 }
 
+// orden de capas: HUD siempre debajo del overlay de resultado
 export const UI_DEPTH = {
   HUD: 5,
   OVERLAY: 10,
   TEXT: 11,
 }
 
+// estilos de texto agrupados por contexto (botón, títulos, HUD, crafteo)
 export const UI_STYLES = {
-  TITOL_RESULTAT: {
-    fontSize: '64px',
+  // sombra aplicada en Boto.js, no aquí
+  BOTO_TEXT: {
+    fontSize: '20px',
+    fontFamily: FF,
     fontStyle: 'bold',
-    stroke: UI_COLORS.STROKE,
+    fill: '#ffffff',
+  },
+
+  TITOL_RESULTAT: {
+    fontSize: '52px',
+    fontStyle: 'bold',
+    fontFamily: FF,
+    stroke: '#000000',
     strokeThickness: 6,
   },
-  ESTRELLES: {
-    fontSize: '48px',
-    color: UI_COLORS.VICTORIA,
-    stroke: UI_COLORS.STROKE,
+  TITOL_ESCENA: {
+    fontSize: '36px',
+    fontStyle: 'bold',
+    fontFamily: FF,
+    fill: '#ffffff',
+    stroke: '#000000',
     strokeThickness: 4,
   },
+
+  ESTRELLES: {
+    fontSize: '44px',
+    fontFamily: FF,
+    color: '#f5c518',
+    stroke: '#000000',
+    strokeThickness: 4,
+  },
+
   HUD_LABEL: {
+    fontSize: '22px',
+    fontStyle: 'bold',
+    fontFamily: FF,
+    shadow: SHADOW_SM,
+  },
+  HUD_INVENTARI: {
+    fontSize: '12px',
+    fontFamily: FF,
+    fill: '#a78bfa',
+  },
+  KEY_BADGE: {
+    fontSize: '10px',
+    fontFamily: FF,
+    fill: '#9ca3af',
+  },
+
+  CRAFTING_TITOL: {
+    fontSize: '36px',
+    fontStyle: 'bold',
+    fontFamily: FF,
+    fill: '#ffffff',
+    stroke: '#000000',
+    strokeThickness: 4,
+  },
+  CRAFTING_NOM: {
+    fontSize: '16px',
+    fontStyle: 'bold',
+    fontFamily: FF,
+    fill: '#ffffff',
+    shadow: SHADOW_SM,
+  },
+  CRAFTING_DESC: {
+    fontSize: '13px',
+    fontFamily: FF,
+    fill: '#cbd5e1',
+    shadow: SHADOW_SM,
+  },
+  CRAFTING_INGREDIENT: {
+    fontSize: '13px',
+    fontFamily: FF,
+  },
+  CRAFTING_AVIS: {
     fontSize: '20px',
     fontStyle: 'bold',
-    stroke: UI_COLORS.STROKE,
-    strokeThickness: 3,
+    fontFamily: FF,
   },
 }

@@ -5,8 +5,8 @@ import { Nivell } from './Nivell.js'
 import { TIPOS_CASILLA } from '../constants/tiposCasella.js'
 
 /**
- * Classe principal que organitza l'estat del joc per nivell.
- * estat pot ser 'inactiu', 'jugant', 'victoria' o 'derrota'.
+ * Orquesta el estado de la partida: mapa, jugador, estrellas y resultado.
+ * `estat` puede ser 'inactiu', 'jugant', 'victoria' o 'derrota'.
  */
 export class Joc {
   constructor(nivellActual = null) {
@@ -18,16 +18,9 @@ export class Joc {
     this.estat = 'inactiu'
   }
 
-  /**
-   * Coloca un rail en la posición indicada si el jugador tiene rails.
-   * Después de colocar, comprueba victoria. Si no hay rails y no hay
-   * posibilidad de obtener más (no quedan `BOSC` o no quedan tales disponibles),
-   * marca derrota.
-   * @param {number} fila
-   * @param {number} columna
-   * @returns {{success:boolean, victoria?:boolean, derrota?:boolean, estrelles?:number}}
-   */
+  /** Coloca un rail; devuelve éxito, victoria o derrota según el resultado */
   colocarRailEn(fila, columna) {
+    // validaciones previas: mapa, posición y posibilidad de colocar
     if (!this.mapa) {
       return { success: false, error: 'no_mapa' }
     }
@@ -44,18 +37,18 @@ export class Joc {
 
     this.accionsUsades++
 
-    // Comprovar si amb aquest rail s'ha aconseguit la victòria
+    // comprueba victoria tras colocar el rail
     if (this.comprovarVictoria()) {
       const resultat = this.finalitzarPartida()
       return { success: true, victoria: true, estrelles: resultat.estrelles }
     }
 
-    // Si no queden rails, comprovar si hi ha manera d'obtenir-ne més
+    // sin rails restantes: comprueba si todavía es posible obtener más
     if (this.jugador.rails <= 0) {
       const boscsRestants = this.mapa.contarTipus(TIPOS_CASILLA.BOSC)
       const talesDisponibles = this.jugador.talesDisponibles
 
-      // Els obstacles no donen rails, així que només els boscs poden generar-ne
+      // los obstáculos no generan rails al destruirse, solo los bosques talados
       if (talesDisponibles <= 0 || boscsRestants === 0) {
         const resultat = this.finalitzarPartida()
         return { success: true, derrota: true, estrelles: resultat.estrelles }
@@ -65,17 +58,13 @@ export class Joc {
     return { success: true, victoria: false, derrota: false }
   }
 
-  /**
-   * Inicia el joc amb una instancia de `Nivell`.
-   * Crea `Mapa` i `Jugador` segons la configuració del nivell.
-   * @param {Nivell} nivell
-   * @returns {Joc} retorna `this` per encadenar
-   */
+  /** @param {Nivell} nivell @returns {Joc} this para encadenar */
   iniciarJoc(nivell) {
     if (!(nivell instanceof Nivell)) {
       throw new Error('Cal passar una instancia valida de Nivell')
     }
 
+    // arranca un nuevo mapa, jugador y sistema de estrellas a partir del nivel
     const estatNivell = nivell.iniciarNivell()
     this.nivellActual = nivell
     this.mapa = new Mapa(estatNivell.mapaInicial)
@@ -91,27 +80,17 @@ export class Joc {
     return this
   }
 
-  /**
-   * Comprova si s'ha arribat a la condició de victòria (camí complet).
-   * @returns {boolean}
-   */
   comprovarVictoria() {
     if (!this.mapa) {
       return false
     }
-
     return this.mapa.comprovarCami()
   }
 
-  /**
-   * Finalitza la partida i calcula les estrelles obtingudes.
-   * @returns {{victoria:boolean, estrelles:number}}
-   */
+  // cambia el estado a victoria/derrota y calcula las estrellas obtenidas
   finalitzarPartida() {
     const victoria = this.comprovarVictoria()
-
     this.estat = victoria ? 'victoria' : 'derrota'
-
     return {
       victoria,
       estrelles: this.sistemaEstrelles.calcularEstrelles({

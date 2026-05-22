@@ -1,16 +1,8 @@
 /**
- * Representa la configuració d'un nivell.
- * Conté el mapa inicial i els recursos/límits amb què comença el jugador.
+ * Configuración inmutable de un nivel: mapa inicial, recursos y límites de acciones.
+ * `llindarsEstrelles` es [maxAcciones3★, maxAcciones2★]; por encima del 2º da 1★.
  */
 export class Nivell {
-  /**
-   * @param {Object} options
-   * @param {Array<Array<string>>} options.mapaInicial - Matriu de tipus de casella
-   * @param {number} [options.railsInicials=0]
-   * @param {Object} [options.limitsAccions={}]
-   * @param {[number, number]} [options.llindarsEstrelles=[3,5]] - [max accions 3★, max accions 2★]
-   * @param {string} [options.nom='Nivell']
-   */
   constructor({ mapaInicial, railsInicials = 0, limitsAccions = {}, llindarsEstrelles = [3, 5], nom = 'Nivell' }) {
     this.nom = nom
     this.mapaInicial = mapaInicial
@@ -23,10 +15,7 @@ export class Nivell {
     }
   }
 
-  /**
-   * Retorna l'estat inicial del nivell (clonat per evitar mutacions externes).
-   * @returns {{mapaInicial:Array<Array<string>>, railsInicials:number, llindarsEstrelles:[number,number], limitsAccions:Object}}
-   */
+  // devuelve copia para que el caller no mute el estado interno del nivel
   iniciarNivell() {
     return {
       mapaInicial: this.mapaInicial.map((fila) => [...fila]),

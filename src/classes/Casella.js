@@ -1,30 +1,17 @@
 import { TIPOS_CASILLA } from '../constants/tiposCasella.js'
 
-/**
- * Representa una casella del mapa.
- * @class Casella
- * @param {string} tipus - Tipo inicial de la casella (usar `TIPOS_CASILLA`).
- */
+/** Casilla del mapa con un tipo de terreno mutable */
 export class Casella {
   constructor(tipus = TIPOS_CASILLA.PLA) {
     this.tipus = tipus
   }
 
-  /**
-   * Cambia el tipo de la casella.
-   * @param {string} nouTipus
-   */
   canviarTipus(nouTipus) {
     this.tipus = nouTipus
   }
 
-  /**
-   * Indica si la casella es construible (terreno plano).
-   * @returns {boolean}
-   */
+  // solo el terreno plano admite colocar rail encima
   esConstruible() {
     return this.tipus === TIPOS_CASILLA.PLA
   }
-
-
 }
