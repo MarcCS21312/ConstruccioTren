@@ -24,11 +24,20 @@ export class PauseScene extends Phaser.Scene {
             this.treurePausa();
         });
 
-        new Button(this, cx, cy + 90, 'MENÚ PRINCIPAL', 0x6b7280, 0x9ca3af, () => {
+        new Button(this, cx, cy + 90, 'REINICIAR NIVELL', 0xf59e0b, 0xfbbf24, () => {
+            this.reiniciarNivell();
+        });
+
+        new Button(this, cx, cy + 170, 'MENÚ PRINCIPAL', 0x6b7280, 0x9ca3af, () => {
             this.anarAlMenu();
         });
 
         this.input.keyboard.on('keydown-ESC', () => this.treurePausa());
+    }
+
+    reiniciarNivell() {
+        this.scene.stop('PauseScene');
+        this.scene.start('PlayScene');
     }
 
     treurePausa() {
