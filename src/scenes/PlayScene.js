@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { Joc, Nivell, TIPOS_CASILLA } from '../classes/index.js';
+import { Joc, Nivell, TIPOS_CASILLA, Button } from '../classes/index.js';
 import { COLORS_CASELLA } from '../constants/colors.js';
 import { NIVELL_PROVA } from '../config/nivells.js';
 
@@ -29,35 +29,16 @@ export class PlayScene extends Phaser.Scene {
     // Clics al mapa (canviat a 'pointerup' per seguretat amb les transicions)
     this.input.on('pointerup', this.onClic, this)
 
-    // ==========================================
-    // SISTEMA DE PAUSA
-    // ==========================================
+    this.input.keyboard.on('keydown-ESC', () => this.activarPausa());
 
-    // A. Escuchar la tecla ESCAPE
-    this.input.keyboard.on('keydown-ESC', () => {
-        this.activarPausa();
-    });
-
-    // B. Crear el botó petit de pausa (emoticona ⏸) a la cantonada superior dreta
-    this.botoPausaPetit = this.add.text(this.scale.width - 40, 40, '⏸', {
-        fontSize: '28px',
-        fontFamily: 'Arial, sans-serif',
-        fill: '#ffffff',
-        backgroundColor: '#222222',
-        padding: { x: 12, y: 8 }
-    }).setOrigin(0.5);
-
-    // Activen interactivitat amb la maneta de selecció
-    this.botoPausaPetit.setInteractive({ useHandCursor: true });
-    
-    // Canvi de color estil hover (opcional, li dona un toc maco)
-    this.botoPausaPetit.on('pointerover', () => this.botoPausaPetit.setStyle({ fill: '#60a5fa' }));
-    this.botoPausaPetit.on('pointerout', () => this.botoPausaPetit.setStyle({ fill: '#ffffff' }));
-
-    // Executar la pausa en fer clic al botó
-    this.botoPausaPetit.on('pointerup', () => {
-        this.activarPausa();
-    });
+    this.botoPausa = new Button(
+      this,
+      this.scale.width - 50, 38,
+      '⏸',
+      0x374151, 0x4b5563,
+      () => this.activarPausa(),
+      70, 44
+    );
   }
 
   /**
@@ -96,10 +77,9 @@ export class PlayScene extends Phaser.Scene {
   onClic(pointer) {
     if (this.joc.estat !== 'jugant') return
 
-    // Evitem que el clic s'accioni si l'usuari ha clicat exactament a sobre del botó de pausa
-    // Calculant la distància entre el ratolí i el botó petit
-    const distanciaAlBotoPausa = Phaser.Math.Distance.Between(pointer.x, pointer.y, this.botoPausaPetit.x, this.botoPausaPetit.y);
-    if (distanciaAlBotoPausa < 30) return;
+    const { x, y } = this.botoPausa.container;
+    const { ample, alt } = this.botoPausa;
+    if (Math.abs(pointer.x - x) < ample / 2 && Math.abs(pointer.y - y) < alt / 2) return;
 
     const { files, columnes } = this.joc.mapa.mida
     const columna = Math.floor((pointer.x - this.offsetX) / MIDA_CASELLA)

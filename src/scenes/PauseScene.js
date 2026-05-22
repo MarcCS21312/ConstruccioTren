@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import {Button} from '../classes/Boto.js'; // La teva classe de botó universal
+import { Button } from '../classes/Boto.js';
 
 export class PauseScene extends Phaser.Scene {
     constructor() {
@@ -7,35 +7,37 @@ export class PauseScene extends Phaser.Scene {
     }
 
     create() {
-        const ample = this.scale.width;
-        const alt = this.scale.height;
+        const { width, height } = this.scale;
+        const cx = width / 2;
+        const cy = height / 2;
 
-        // 1. Fons fosc semitransparent (l'últim paràmetre 0.6 és l'opacitat)
-        this.add.rectangle(0, 0, ample, alt, 0x000000, 0.6).setOrigin(0);
+        this.add.rectangle(0, 0, width, height, 0x000000, 0.65).setOrigin(0);
 
-        // 2. Text de Pausa
-        this.add.text(ample / 2, alt / 2 - 60, 'JOC EN PAUSA', {
+        this.add.text(cx, cy - 90, 'JOC EN PAUSA', {
             fontSize: '40px',
             fontFamily: 'Arial, sans-serif',
             fontWeight: 'bold',
             fill: '#ffffff'
         }).setOrigin(0.5);
 
-        // 3. Botó universal per RESUMIR la partida
-        this.resumeButton = new Button(this, ample / 2, alt / 2 + 40, 'RESUME', 0x3b82f6, 0x60a5fa, () => {
+        new Button(this, cx, cy + 10, 'REPRENDRE', 0x3b82f6, 0x60a5fa, () => {
             this.treurePausa();
         });
 
-        // 4. També escoltem la tecla ESC dins de la pausa per poder sortir-ne
-        this.input.keyboard.on('keydown-ESC', () => {
-            this.treurePausa();
+        new Button(this, cx, cy + 90, 'MENÚ PRINCIPAL', 0x6b7280, 0x9ca3af, () => {
+            this.anarAlMenu();
         });
+
+        this.input.keyboard.on('keydown-ESC', () => this.treurePausa());
     }
 
     treurePausa() {
-        // Reprenem l'activitat de la PlayScene
         this.scene.resume('PlayScene');
-        // Tanquem aquesta pantalla de pausa
-        this.scene.stop();
+        this.scene.stop('PauseScene');
+    }
+
+    anarAlMenu() {
+        this.scene.stop('PlayScene');
+        this.scene.start('MenuScene');
     }
 }
