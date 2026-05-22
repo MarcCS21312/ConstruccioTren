@@ -1,13 +1,13 @@
-/** Lógica de crafteo desacoplada de Phaser; opera sobre una instancia Jugador */
+// Lógica de crafteo desacoplada de Phaser; opera sobre una instancia Jugador
 export class SistemaCrafteig {
-  /** @param {import('./Jugador.js').Jugador} jugador @returns {boolean} */
+  // @param {import('./Jugador.js').Jugador} jugador @returns {boolean}
   potCraftejar(jugador, recepta) {
     return Object.entries(recepta.ingredients).every(
       ([recurs, cost]) => jugador[recurs] >= cost
     )
   }
 
-  /** @param {import('./Jugador.js').Jugador} jugador @returns {boolean} false si faltan ingredientes */
+  // @param {import('./Jugador.js').Jugador} jugador @returns {boolean} false si faltan ingredientes
   aplicar(jugador, recepta) {
     if (!this.potCraftejar(jugador, recepta)) return false
 

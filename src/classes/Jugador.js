@@ -1,6 +1,6 @@
 import { TIPOS_CASILLA } from '../constants/tiposCasella.js'
 
-/** Recursos del jugador y operaciones que consumen sus contadores */
+// Recursos del jugador y operaciones que consumen sus contadores
 export class Jugador {
   constructor(rails = 0, talesDisponibles = 0, destruccionsDisponibles = 0) {
     this.rails = rails

@@ -10,7 +10,7 @@ const LABEL_GAP      = 16
 const INNER_PAD      = 16
 const CONTENT_OFFSET = 9    // eleva el contenido para centrar visualmente botón+badge dentro del panel
 
-/** HUD superior con recursos del jugador, botones de acción e inventario */
+// HUD superior con recursos del jugador, botones de acción e inventario
 export class HUD {
   constructor(scene, offsetY, { onPausa, onCrafteig } = {}) {
     this.scene   = scene
@@ -87,7 +87,7 @@ export class HUD {
       .setDepth(UI_DEPTH.HUD + 2)
   }
 
-  /** @param {import('../classes/Jugador.js').Jugador} jugador */
+  // @param {import('../classes/Jugador.js').Jugador} jugador
   actualitzar(jugador) {
     this.txtPico.setText(`⛏️ Pico: ${jugador.destruccionsDisponibles}`)
     this.txtDestral.setText(`🪓 Hacha: ${jugador.talesDisponibles}`)
@@ -97,7 +97,7 @@ export class HUD {
     this.txtInventari.setText(itemsText ? `Crafteado: ${itemsText}` : '')
   }
 
-  /** @param {Phaser.Input.Pointer} pointer @returns {boolean} */
+  // @param {Phaser.Input.Pointer} pointer @returns {boolean}
   esClic(pointer) {
     return this._botons.some(b => {
       const dx = Math.abs(pointer.x - b.container.x)

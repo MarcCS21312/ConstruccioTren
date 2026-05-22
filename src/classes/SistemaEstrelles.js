@@ -1,7 +1,7 @@
-/**
- * Calcula estrellas (0-3) tras una partida según las acciones consumidas.
- * `llindars[0]` = max acciones para 3★, `llindars[1]` = max para 2★, resto 1★.
- */
+/*
+  Calcula estrellas (0-3) tras una partida según las acciones consumidas.
+  `llindars[0]` = max acciones para 3★, `llindars[1]` = max para 2★, resto 1★.
+*/
 export class SistemaEstrelles {
   constructor(llindars = [3, 5]) {
     this.llindars = llindars

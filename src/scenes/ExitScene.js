@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { Button } from '../classes/Boto.js';
 
-/** Pantalla de despedida tras pulsar SALIR en el menú; ofrece volver al menú */
+// Pantalla de despedida tras pulsar SALIR en el menú; ofrece volver al menú
 export class ExitScene extends Phaser.Scene {
     constructor() {
         super({ key: 'ExitScene' });

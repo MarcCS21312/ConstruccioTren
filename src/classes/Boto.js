@@ -5,10 +5,10 @@ import { UI_STYLES } from '../constants/ui.js';
 const PAD_H = 40
 const PAD_V = 20
 
-/**
- * Botón reutilizable con fondo redondeado y efecto hover.
- * Si se pasa ample/alt y el texto no cabe, las dimensiones se expanden para contenerlo.
- */
+/*
+  Botón reutilizable con fondo redondeado y efecto hover.
+  Si se pasa ample/alt y el texto no cabe, las dimensiones se expanden para contenerlo.
+*/
 export class Button {
   constructor(scene, x, y, textBoto, colorBase, colorHover, callback, ample = null, alt = null) {
     this.scene      = scene;

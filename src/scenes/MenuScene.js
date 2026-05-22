@@ -5,7 +5,7 @@ import { UI_STYLES } from '../constants/ui.js';
 const BTN_H_EST = 44
 const BTN_GAP   = 24
 
-/** Menú principal: punto de entrada con botones para jugar o salir */
+// Menú principal: punto de entrada con botones para jugar o salir
 export class MenuScene extends Phaser.Scene {
   constructor() {
     super({ key: 'MenuScene' });

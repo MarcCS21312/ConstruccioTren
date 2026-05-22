@@ -7,7 +7,7 @@ import { HUD } from '../ui/HUD.js';
 
 const MIDA_CASELLA = 80
 
-/** Escena principal de juego: pinta el mapa, gestiona clics y muestra resultado */
+// Escena principal de juego: pinta el mapa, gestiona clics y muestra resultado
 export class PlayScene extends Phaser.Scene {
   constructor() {
     super({ key: 'PlayScene' });

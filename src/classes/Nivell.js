@@ -1,7 +1,7 @@
-/**
- * Configuración inmutable de un nivel: mapa inicial, recursos y límites de acciones.
- * `llindarsEstrelles` es [maxAcciones3★, maxAcciones2★]; por encima del 2º da 1★.
- */
+/*
+  Configuración inmutable de un nivel: mapa inicial, recursos y límites de acciones.
+  `llindarsEstrelles` es [maxAcciones3★, maxAcciones2★]; por encima del 2º da 1★.
+*/
 export class Nivell {
   constructor({ mapaInicial, railsInicials = 0, limitsAccions = {}, llindarsEstrelles = [3, 5], nom = 'Nivell' }) {
     this.nom = nom

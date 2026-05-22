@@ -20,7 +20,7 @@ const ETIQUETES = {
   destruccionsDisponibles: '⛏️ Pico',
 }
 
-/** Escena overlay del taller: pinta una tarjeta por receta y permite craftear */
+// Escena overlay del taller: pinta una tarjeta por receta y permite craftear
 export class CraftingScene extends Phaser.Scene {
   constructor() {
     super({ key: 'CraftingScene' })

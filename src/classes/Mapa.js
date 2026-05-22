@@ -9,7 +9,7 @@ const DIRECCIONS = [
   [0, -1]
 ]
 
-/** Matriz de Casella con consultas, búsqueda de posición y validación de camino */
+// Matriz de Casella con consultas, búsqueda de posición y validación de camino
 export class Mapa {
   constructor(caselles = []) {
     this.caselles = this.normalitzarCaselles(caselles)
@@ -24,7 +24,7 @@ export class Mapa {
     return caselles.map((fila) => fila.map((casella) => casella instanceof Casella ? casella : new Casella(casella)))
   }
 
-  /** @returns {Casella|null} */
+  // @returns {Casella|null}
   obtenirCasella(fila, columna) {
     return this.caselles[fila]?.[columna] ?? null
   }
@@ -37,7 +37,7 @@ export class Mapa {
     }
   }
 
-  /** @returns {{fila:number, columna:number}|null} */
+  // @returns {{fila:number, columna:number}|null}
   trobarPosicio(tipusBuscat) {
     for (let fila = 0; fila < this.caselles.length; fila += 1) {
       for (let columna = 0; columna < this.caselles[fila].length; columna += 1) {
@@ -62,7 +62,6 @@ export class Mapa {
   }
 
   // BFS sobre casillas conectadas (RAIL, INICIO, META) buscando la meta desde el inicio
-  /** @returns {boolean} */
   comprovarCami() {
     const inici = this.trobarPosicio(TIPOS_CASILLA.INICI)
     const meta = this.trobarPosicio(TIPOS_CASILLA.META)

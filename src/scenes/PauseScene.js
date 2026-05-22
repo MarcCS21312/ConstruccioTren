@@ -5,7 +5,7 @@ import { UI_STYLES } from '../constants/ui.js';
 const BTN_H_EST = 44
 const BTN_GAP   = 24
 
-/** Escena overlay que pausa PlayScene y ofrece continuar, reiniciar o salir al menú */
+// Escena overlay que pausa PlayScene y ofrece continuar, reiniciar o salir al menú
 export class PauseScene extends Phaser.Scene {
   constructor() {
     super({ key: 'PauseScene' });

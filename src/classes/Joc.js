@@ -4,10 +4,10 @@ import { SistemaEstrelles } from './SistemaEstrelles.js'
 import { Nivell } from './Nivell.js'
 import { TIPOS_CASILLA } from '../constants/tiposCasella.js'
 
-/**
- * Orquesta el estado de la partida: mapa, jugador, estrellas y resultado.
- * `estat` puede ser 'inactiu', 'jugant', 'victoria' o 'derrota'.
- */
+/*
+  Orquesta el estado de la partida: mapa, jugador, estrellas y resultado.
+  `estat` puede ser 'inactiu', 'jugant', 'victoria' o 'derrota'.
+*/
 export class Joc {
   constructor(nivellActual = null) {
     this.nivellActual = nivellActual
@@ -18,7 +18,7 @@ export class Joc {
     this.estat = 'inactiu'
   }
 
-  /** Coloca un rail; devuelve éxito, victoria o derrota según el resultado */
+  // Coloca un rail; devuelve éxito, victoria o derrota según el resultado
   colocarRailEn(fila, columna) {
     // validaciones previas: mapa, posición y posibilidad de colocar
     if (!this.mapa) {
@@ -58,7 +58,7 @@ export class Joc {
     return { success: true, victoria: false, derrota: false }
   }
 
-  /** @param {Nivell} nivell @returns {Joc} this para encadenar */
+  // @param {Nivell} nivell @returns {Joc} this para encadenar
   iniciarJoc(nivell) {
     if (!(nivell instanceof Nivell)) {
       throw new Error('Cal passar una instancia valida de Nivell')
