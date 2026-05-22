@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { Joc, Nivell, TIPOS_CASILLA } from '../classes/index.js';
+import { Joc, Nivell, TIPOS_CASILLA, Button } from '../classes/index.js';
 import { COLORS_CASELLA } from '../constants/colors.js';
 import { NIVELL_PROVA } from '../config/nivells.js';
 import { UI_COLORS, UI_DEPTH, UI_STYLES } from '../constants/ui.js';
@@ -15,8 +15,10 @@ export class PlayScene extends Phaser.Scene {
   preload() {}
 
   create() {
-    this.nivell = new Nivell(NIVELL_PROVA)
+    // 1. Piquem un fons sòlid fosc per netejar la pantalla del Menú vell
+    this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x111111).setOrigin(0);
 
+    this.nivell = new Nivell(NIVELL_PROVA)
     this.joc = new Joc().iniciarJoc(this.nivell)
 
     const { files, columnes } = this.joc.mapa.mida
@@ -28,7 +30,27 @@ export class PlayScene extends Phaser.Scene {
     this.hud = new HUD(this, this.offsetY)
     this.hud.actualitzar(this.joc.jugador)
 
-    this.input.on('pointerdown', this.onClic, this)
+    // Clics al mapa (canviat a 'pointerup' per seguretat amb les transicions)
+    this.input.on('pointerup', this.onClic, this)
+
+    this.input.keyboard.on('keydown-ESC', () => this.activarPausa());
+
+    this.botoPausa = new Button(
+      this,
+      this.scale.width - 50, 38,
+      '⏸',
+      0x374151, 0x4b5563,
+      () => this.activarPausa(),
+      70, 44
+    );
+  }
+
+  /**
+   * Atura l'escena actual de joc i llança la capa de pausa a sobre.
+   */
+  activarPausa() {
+      this.scene.pause();
+      this.scene.launch('PauseScene'); // 'launch' manté la PlayScene visible al fons
   }
 
   /**
@@ -55,13 +77,13 @@ export class PlayScene extends Phaser.Scene {
 
   /**
    * Detecta el clic del ratolí, identifica la fila/columna i executa l'acció corresponent.
-   * - BOSC → jugador.talarArbre
-   * - OBSTACLE → jugador.destruirObstacle
-   * - PLA → joc.colocarRailEn
-   * @param {Phaser.Input.Pointer} pointer
    */
   onClic(pointer) {
     if (this.joc.estat !== 'jugant') return
+
+    const { x, y } = this.botoPausa.container;
+    const { ample, alt } = this.botoPausa;
+    if (Math.abs(pointer.x - x) < ample / 2 && Math.abs(pointer.y - y) < alt / 2) return;
 
     const { files, columnes } = this.joc.mapa.mida
     const columna = Math.floor((pointer.x - this.offsetX) / MIDA_CASELLA)
