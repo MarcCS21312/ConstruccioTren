@@ -11,6 +11,11 @@ export class PauseScene extends Phaser.Scene {
     super({ key: 'PauseScene' });
   }
 
+  init(data) {
+    // recibe el índice desde PlayScene para poder reiniciar el nivel correcto
+    this.nivelIndex = data?.nivelIndex ?? 0
+  }
+
   create() {
     const { width, height } = this.scale;
     const cx = width  / 2;
@@ -48,7 +53,7 @@ export class PauseScene extends Phaser.Scene {
 
   reiniciarNivell() {
     this.scene.stop('PauseScene');
-    this.scene.start('PlayScene');
+    this.scene.start('PlayScene', { index: this.nivelIndex });
   }
 
   treurePausa() {
