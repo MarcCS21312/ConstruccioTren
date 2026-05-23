@@ -9,6 +9,16 @@ const DIRECCIONS = [
   [0, -1]
 ]
 
+// todas las variantes de RAIL son atravesables por el camino
+const TIPUS_CONNEXOS = new Set([
+  TIPOS_CASILLA.RAIL,
+  TIPOS_CASILLA.RAIL_PUENTE,
+  TIPOS_CASILLA.RAIL_NEU,
+  TIPOS_CASILLA.RAIL_PARADA,
+  TIPOS_CASILLA.INICI,
+  TIPOS_CASILLA.META,
+])
+
 // Matriz de Casella con consultas, búsqueda de posición y validación de camino
 export class Mapa {
   constructor(caselles = []) {
@@ -61,52 +71,45 @@ export class Mapa {
     return comptador
   }
 
-  // BFS sobre casillas conectadas (RAIL, INICIO, META) buscando la meta desde el inicio
+  // BFS desde INICI; la victoria exige llegar a META y tener todas las PARADAs visitadas
   comprovarCami() {
     const inici = this.trobarPosicio(TIPOS_CASILLA.INICI)
-    const meta = this.trobarPosicio(TIPOS_CASILLA.META)
+    const meta  = this.trobarPosicio(TIPOS_CASILLA.META)
+    if (!inici || !meta) return false
 
-    if (!inici || !meta) {
-      return false
-    }
+    // PARADAs sin convertir en RAIL_PARADA significa que aún faltan visitar
+    if (this.contarTipus(TIPOS_CASILLA.PARADA) > 0) return false
 
-    // estructuras de la búsqueda en anchura
     const visitades = new Set()
     const cua = [inici]
 
     while (cua.length > 0) {
       const actual = cua.shift()
       const clau = `${actual.fila},${actual.columna}`
-
-      if (visitades.has(clau)) {
-        continue
-      }
-
+      if (visitades.has(clau)) continue
       visitades.add(clau)
 
-      // condición de éxito: hemos llegado a la meta
-      if (actual.fila === meta.fila && actual.columna === meta.columna) {
-        return true
-      }
-
-      // explora los 4 vecinos ortogonales y encola los conectables
-      for (const [deltaFila, deltaColumna] of DIRECCIONS) {
-        const novaFila = actual.fila + deltaFila
-        const novaColumna = actual.columna + deltaColumna
-        const casella = this.obtenirCasella(novaFila, novaColumna)
-
-        if (!casella) {
-          continue
-        }
-
-        const esConnex = casella.tipus === TIPOS_CASILLA.RAIL || casella.tipus === TIPOS_CASILLA.META || casella.tipus === TIPOS_CASILLA.INICI
-
-        if (esConnex) {
-          cua.push({ fila: novaFila, columna: novaColumna })
+      for (const [df, dc] of DIRECCIONS) {
+        const nf = actual.fila + df
+        const nc = actual.columna + dc
+        const casella = this.obtenirCasella(nf, nc)
+        if (casella && TIPUS_CONNEXOS.has(casella.tipus)) {
+          cua.push({ fila: nf, columna: nc })
         }
       }
     }
 
-    return false
+    // META alcanzable desde INICI
+    if (!visitades.has(`${meta.fila},${meta.columna}`)) return false
+
+    // todas las RAIL_PARADA deben estar conectadas al camino principal
+    for (let f = 0; f < this.mida.files; f++) {
+      for (let c = 0; c < this.mida.columnes; c++) {
+        if (this.caselles[f][c].tipus === TIPOS_CASILLA.RAIL_PARADA) {
+          if (!visitades.has(`${f},${c}`)) return false
+        }
+      }
+    }
+    return true
   }
 }

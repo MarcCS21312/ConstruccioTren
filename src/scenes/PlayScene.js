@@ -3,10 +3,8 @@ import { Joc, Nivell, TIPOS_CASILLA, GeneradorProcedural, Button } from '../clas
 import { COLORS_CASELLA } from '../constants/colors.js';
 import { CAMPANA } from '../config/campana.js';
 import { UI_COLORS, UI_DEPTH, UI_STYLES } from '../constants/ui.js';
-import { HUD } from '../ui/HUD.js';
+import { HUD, PANEL_ALT as HUD_H, SIDE_W as HUD_SIDE_W } from '../ui/HUD.js';
 
-// altura del panel HUD; debe coincidir con PANEL_ALT en HUD.js
-const HUD_H    = 110
 // margen mínimo entre el mapa y los bordes de pantalla
 const MARGE    = 12
 // tamaño máximo de celda; los mapas pequeños no crecen más
@@ -36,18 +34,19 @@ export class PlayScene extends Phaser.Scene {
 
     // tamaño de celda dinámico: el mapa siempre cabe en pantalla independientemente del nivel
     const { files, columnes } = this.joc.mapa.mida
-    const maxCeldaW = Math.floor((this.scale.width  - MARGE * 2) / columnes)
+    const maxCeldaW = Math.floor((this.scale.width  - MARGE * 2 - HUD_SIDE_W * 2) / columnes)
     const maxCeldaH = Math.floor((this.scale.height - HUD_H - MARGE * 2) / files)
     this.mida = Math.min(maxCeldaW, maxCeldaH, MAX_MIDA)
 
-    // centra el mapa en el espacio disponible bajo el HUD
-    this.offsetX = (this.scale.width  - columnes * this.mida) / 2
+    // centra el mapa en el espacio entre los paneles laterales y bajo el HUD
+    const availableW = this.scale.width - HUD_SIDE_W * 2
+    this.offsetX = HUD_SIDE_W + (availableW - columnes * this.mida) / 2
     this.offsetY = HUD_H + MARGE + (this.scale.height - HUD_H - MARGE * 2 - files * this.mida) / 2
 
     // render del mapa y HUD
     this.graphics = this.add.graphics()
     this.dibuixarMapa()
-    this.hud = new HUD(this, this.offsetY, {
+    this.hud = new HUD(this, {
       onPausa:    () => this.activarPausa(),
       onCrafteig: () => this.activarCrafteig(),
     })
@@ -118,7 +117,8 @@ export class PlayScene extends Phaser.Scene {
       case TIPOS_CASILLA.PIEDRA:
         this.joc.jugador.destruirObstacle(casella)
         break
-      // Joc enruta internamente: NEU→via_nieve, AGUA→puente, PLA→rail
+      // Joc enruta internamente: NEU→via_nieve, AGUA→puente, PLA/PARADA→rail
+      case TIPOS_CASILLA.PARADA:
       case TIPOS_CASILLA.NEU:
       case TIPOS_CASILLA.AGUA:
       case TIPOS_CASILLA.PLA: {

@@ -26,9 +26,11 @@ export class Casella {
     this.obstacle = Cls ? new Cls() : null
   }
 
-  // PLA y NEU admiten colocar una vía encima (cada uno con su tipo de vía)
+  // PLA, NEU y PARADA admiten colocar una vía encima (cada uno con su tipo de vía)
   esConstruible() {
-    return this.tipus === TIPOS_CASILLA.PLA || this.tipus === TIPOS_CASILLA.NEU
+    return this.tipus === TIPOS_CASILLA.PLA
+      || this.tipus === TIPOS_CASILLA.NEU
+      || this.tipus === TIPOS_CASILLA.PARADA
   }
 
   // delega al obstáculo; false si la casilla no tiene obstáculo asociado
