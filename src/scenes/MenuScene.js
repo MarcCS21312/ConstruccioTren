@@ -32,7 +32,7 @@ export class MenuScene extends Phaser.Scene {
     }).setOrigin(0.5).setResolution(window.devicePixelRatio || 2);
 
     const botoConfigs = [
-      { label: 'JUGAR',  color: 0x3b82f6, hover: 0x60a5fa, cb: () => this.scene.start('PlayScene') },
+      { label: 'JUGAR',  color: 0x3b82f6, hover: 0x60a5fa, cb: () => this.scene.start('LevelSelectScene') },
       { label: 'SALIR',  color: 0xef4444, hover: 0xf87171, cb: () => this.scene.start('ExitScene')  },
     ];
 

@@ -1,7 +1,7 @@
 import { TIPOS_CASILLA } from '../constants/tiposCasella.js'
 
-// abreviaturas para que los mapas sean legibles a simple vista
-const o = TIPOS_CASILLA.PLA       // celda vacía
+// abreviaturas para mapas legibles
+const o = TIPOS_CASILLA.PLA
 const I = TIPOS_CASILLA.INICI
 const M = TIPOS_CASILLA.META
 const B = TIPOS_CASILLA.BOSC
@@ -11,111 +11,98 @@ const N = TIPOS_CASILLA.NEU
 const T = TIPOS_CASILLA.MONTANYA
 const S = TIPOS_CASILLA.PARADA
 
-/*
-  Cinco niveles diseñados manualmente con dificultad progresiva.
-  Cada nivel introduce un concepto nuevo y obliga a planificar antes de colocar la primera vía.
-
-  llindarsEstrelles: [maxAcciones para 3★, maxAcciones para 2★].
-  Las "acciones" cuentan solo colocaciones de vía/puente/vía de nieve (no talas, destrucciones ni crafteos).
-*/
+// 5 niveles con dificultad progresiva
+// niveles 1-2: el reto está en elegir bien qué destruir y qué construir
+// niveles 3-5: múltiples rutas falsas con costes distintos (estrellas o derrota)
 export const CAMPANA = [
 
-  // ─────────────────────────────────────────────────────────────
-  // Nivel 1 — "Primer trayecto" (5×7)
-  // Tutorial: aprende a colocar vías. Sin obstáculos en el camino directo.
-  // Hay un bosque y una piedra como "decoración" para experimentar.
+  // Nivel 1 (5x7): dos rutas posibles. la corta requiere romper obstáculos exactos
+  // la larga pasa por bosques que parecen un atajo pero gastan más rails
   {
-    nom: 'Primer trayecto',
+    nom: 'Decisiones',
     mapaInicial: [
-      [o, o, o, o, o, o, o],
-      [I, o, B, o, o, o, o],
-      [o, o, o, o, R, o, o],
-      [o, o, o, o, o, o, M],
-      [o, o, o, o, o, o, o],
+      [T, T, T, T, T, T, T],
+      [I, o, B, o, R, o, T],
+      [T, o, T, T, T, o, T],
+      [T, B, R, B, R, o, M],
+      [T, T, T, T, T, T, T],
     ],
-    railsInicials: 10,
-    limitsAccions: { tales: 1, destruccions: 1 },
-    llindarsEstrelles: [8, 11],
-  },
-
-  // ─────────────────────────────────────────────────────────────
-  // Nivel 2 — "Escasez" (6×7)
-  // Pocos rails iniciales: obliga a talar y destruir para craftear más.
-  // Hay obstáculos en el camino corto que fuerzan a desviarse o talar.
-  {
-    nom: 'Escasez',
-    mapaInicial: [
-      [o, o, o, B, o, o, o],
-      [I, o, o, o, o, o, o],
-      [o, o, R, o, o, o, o],
-      [o, B, o, o, o, o, M],
-      [o, o, o, o, R, o, o],
-      [o, o, o, o, o, B, o],
-    ],
-    railsInicials: 5,
+    railsInicials: 6,
     limitsAccions: { tales: 2, destruccions: 2 },
-    llindarsEstrelles: [9, 13],
+    llindarsEstrelles: [6, 8],
   },
 
-  // ─────────────────────────────────────────────────────────────
-  // Nivel 3 — "El río" (7×8)
-  // Introduce el puente: hay un río vertical con un único hueco al sur.
-  // El hueco es la opción larga; craftear un puente es más eficiente.
+  // Nivel 2 (6x7): bosques y piedras superan a las herramientas disponibles
+  // hay que elegir qué 3 talar y qué 3 picar para que cuadre el material
   {
-    nom: 'El río',
+    nom: 'Elige sabiamente',
     mapaInicial: [
-      [o, o, o, o, A, o, o, o],
-      [I, o, o, o, A, o, o, o],
-      [o, B, o, o, A, o, o, o],
-      [o, o, o, o, A, o, o, M],
-      [o, o, o, o, o, o, o, o],
-      [o, o, o, o, A, R, o, o],
-      [o, o, R, o, A, o, B, o],
+      [T, T, T, T, T, T, T],
+      [I, o, B, o, o, B, T],
+      [T, o, T, R, T, o, T],
+      [T, R, T, o, T, R, T],
+      [T, o, T, B, T, o, T],
+      [T, o, o, o, o, o, M],
+    ],
+    railsInicials: 6,
+    limitsAccions: { tales: 3, destruccions: 3 },
+    llindarsEstrelles: [9, 11],
+  },
+
+  // Nivel 3 (7x8): lago grande de 2x3 que parece cruzable con puentes
+  // pero la madera no llega; la única solución es rodearlo por el sur
+  {
+    nom: 'Lago profundo',
+    mapaInicial: [
+      [T, T, T, T, T, T, T, T],
+      [I, o, o, o, o, o, o, T],
+      [T, o, T, T, T, T, o, T],
+      [T, o, T, A, A, A, o, T],
+      [T, o, T, A, A, A, o, T],
+      [T, o, T, T, T, T, o, T],
+      [T, B, o, R, B, R, o, M],
     ],
     railsInicials: 8,
-    limitsAccions: { tales: 2, destruccions: 1 },
-    llindarsEstrelles: [10, 14],
+    limitsAccions: { tales: 2, destruccions: 3 },
+    llindarsEstrelles: [14, 17],
   },
 
-  // ─────────────────────────────────────────────────────────────
-  // Nivel 4 — "La estación" (7×8)
-  // Introduce la parada: la vía debe pasar por una celda adyacente.
-  // La parada está en el centro y se puede tocar desde arriba o desde abajo.
+  // Nivel 4 (7x8): zona central de nieve con piedras dentro, sin bosques
+  // los rails normales son los que arrancas, el resto son vías de nieve
+  // crafteadas con piedra. picar la piedra equivocada te deja sin material
   {
-    nom: 'La estación',
+    nom: 'Glaciar',
     mapaInicial: [
-      [o, o, o, o, o, o, o, o],
-      [I, o, o, B, o, o, o, o],
-      [o, o, o, o, o, o, o, o],
-      [o, R, o, o, S, o, o, M],
-      [o, o, o, o, o, o, o, o],
-      [o, o, o, B, o, R, o, o],
-      [o, o, o, o, o, o, o, o],
+      [T, T, T, T, T, T, T, T],
+      [I, o, o, T, T, T, T, T],
+      [T, T, N, N, N, N, T, T],
+      [T, N, N, R, R, N, T, T],
+      [T, N, R, N, N, R, N, T],
+      [T, T, N, N, N, N, o, T],
+      [T, T, T, T, T, o, o, M],
     ],
-    railsInicials: 9,
-    limitsAccions: { tales: 2, destruccions: 2 },
-    llindarsEstrelles: [10, 14],
+    railsInicials: 5,
+    limitsAccions: { tales: 0, destruccions: 4 },
+    llindarsEstrelles: [13, 16],
   },
 
-  // ─────────────────────────────────────────────────────────────
-  // Nivel 5 — "Travesía épica" (8×9)
-  // Combina todo: dos paradas, río con puente obligatorio, montaña,
-  // nieve opcional y una piedra que bloquea el acceso directo a la meta.
-  // Múltiples soluciones: destruir la piedra (corto) o craftear vía de nieve (largo).
+  // Nivel 5 (8x9): dos paradas opuestas, lago grande y zona de nieve
+  // hay tres caminos aparentes; sólo uno toca ambas paradas con los recursos justos
+  // los otros dos llegan a la meta pero sin parada (no es victoria)
   {
-    nom: 'Travesía épica',
+    nom: 'El infierno',
     mapaInicial: [
-      [o, o, o, T, o, o, o, o, o],
-      [I, o, o, T, o, o, o, o, o],
-      [o, o, o, o, o, o, o, o, o],
-      [o, o, S, o, A, o, o, o, N],
-      [o, B, o, o, A, o, S, R, M],
-      [o, o, o, o, A, o, o, o, N],
-      [o, o, R, o, o, o, o, o, o],
-      [o, o, o, o, o, o, o, o, o],
+      [T, T, T, T, T, T, T, T, T],
+      [I, o, o, o, o, T, B, R, T],
+      [T, o, T, T, o, T, T, T, T],
+      [T, S, o, T, o, A, A, o, T],
+      [T, T, o, T, o, A, A, o, T],
+      [T, o, o, o, o, T, T, o, T],
+      [T, o, T, T, T, T, N, S, T],
+      [T, o, o, o, o, o, N, o, M],
     ],
-    railsInicials: 9,
-    limitsAccions: { tales: 2, destruccions: 2 },
-    llindarsEstrelles: [13, 17],
+    railsInicials: 8,
+    limitsAccions: { tales: 2, destruccions: 5 },
+    llindarsEstrelles: [18, 22],
   },
 ]

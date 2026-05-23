@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { Joc, Nivell, TIPOS_CASILLA, Button } from '../classes/index.js';
 import { COLORS_CASELLA } from '../constants/colors.js';
 import { CAMPANA } from '../config/campana.js';
+import { desbloquearNivel } from '../config/progreso.js';
 import { UI_COLORS, UI_DEPTH, UI_STYLES } from '../constants/ui.js';
 import { HUD, PANEL_ALT as HUD_H, SIDE_W as HUD_SIDE_W } from '../ui/HUD.js';
 
@@ -151,6 +152,9 @@ export class PlayScene extends Phaser.Scene {
     const BTN_DEPTH = UI_DEPTH.TEXT + 1
     const esUltim   = this.nivelIndex >= CAMPANA.length - 1
 
+    // al ganar desbloquea el siguiente nivel para la pantalla de selección
+    if (victoria) desbloquearNivel(this.nivelIndex + 1)
+
     // overlay oscuro a pantalla completa para destacar el resultado
     this.add.rectangle(cx, cy, width, height, UI_COLORS.OVERLAY, UI_COLORS.OVERLAY_ALPHA)
       .setDepth(UI_DEPTH.OVERLAY)
@@ -165,6 +169,9 @@ export class PlayScene extends Phaser.Scene {
       const btn = new Button(this, cx, cy + 90, 'MENÚ PRINCIPAL', 0x6b7280, 0x9ca3af,
         () => this.scene.start('MenuScene'))
       btn.container.setDepth(BTN_DEPTH)
+      const btnSel = new Button(this, cx, cy + 145, 'NIVELES', 0x3b82f6, 0x60a5fa,
+        () => this.scene.start('LevelSelectScene'))
+      btnSel.container.setDepth(BTN_DEPTH)
       return
     }
 
@@ -185,11 +192,17 @@ export class PlayScene extends Phaser.Scene {
       const btn = new Button(this, cx, cy + 90, 'SIGUIENTE NIVEL', 0x3b82f6, 0x60a5fa,
         () => this.scene.start('PlayScene', { index: this.nivelIndex + 1 }))
       btn.container.setDepth(BTN_DEPTH)
+      const btnSel = new Button(this, cx, cy + 145, 'SELECCIONAR NIVEL', 0x6b7280, 0x9ca3af,
+        () => this.scene.start('LevelSelectScene'))
+      btnSel.container.setDepth(BTN_DEPTH)
     } else {
-      // botón de reintentar el mismo nivel con la misma semilla (mapa idéntico)
+      // derrota: reintentar el mismo nivel o volver a la selección
       const btn = new Button(this, cx, cy + 50, 'REINTENTAR', 0xf59e0b, 0xfbbf24,
         () => this.scene.start('PlayScene', { index: this.nivelIndex }))
       btn.container.setDepth(BTN_DEPTH)
+      const btnSel = new Button(this, cx, cy + 105, 'SELECCIONAR NIVEL', 0x6b7280, 0x9ca3af,
+        () => this.scene.start('LevelSelectScene'))
+      btnSel.container.setDepth(BTN_DEPTH)
     }
   }
 

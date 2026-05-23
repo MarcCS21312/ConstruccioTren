@@ -6,6 +6,7 @@ import {ExitScene} from './scenes/ExitScene.js'
 import {PauseScene} from './scenes/PauseScene.js'
 import {CraftingScene} from './scenes/CraftingScene.js'
 import {GuideScene} from './scenes/GuideScene.js'
+import {LevelSelectScene} from './scenes/LevelSelectScene.js'
 
 const config = {
   type: Phaser.AUTO,
@@ -13,7 +14,7 @@ const config = {
   height: 600,
   resolution: window.devicePixelRatio || 1,
   parent: 'gameCanvas',
-  scene: [MenuScene, PlayScene, ExitScene, PauseScene, CraftingScene, GuideScene],
+  scene: [MenuScene, LevelSelectScene, PlayScene, ExitScene, PauseScene, CraftingScene, GuideScene],
   physics: {
     default: 'arcade',
     arcade: {
