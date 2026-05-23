@@ -15,8 +15,12 @@ const ICON_TEXT_GAP = 10
 
 // mapa de claves de Jugador a etiqueta visible (icono + nombre)
 const ETIQUETES = {
-  rails: '🛤️ Vía',
-  talesDisponibles: '🪓 Hacha',
+  rails:    '🛤️ Vía',
+  puentes:  '🌉 Puente',
+  vias_nieve: '❄️ V.Nieve',
+  madera:   '🪵 Madera',
+  piedra:   '🪨 Piedra',
+  talesDisponibles:     '🪓 Hacha',
   destruccionsDisponibles: '⛏️ Pico',
 }
 

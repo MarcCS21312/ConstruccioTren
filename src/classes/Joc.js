@@ -18,9 +18,8 @@ export class Joc {
     this.estat = 'inactiu'
   }
 
-  // Coloca un rail; devuelve éxito, victoria o derrota según el resultado
+  // coloca una vía en (fila, columna) enrutando al método correcto según el terreno
   colocarRailEn(fila, columna) {
-    // validaciones previas: mapa, posición y posibilidad de colocar
     if (!this.mapa) {
       return { success: false, error: 'no_mapa' }
     }
@@ -30,7 +29,16 @@ export class Joc {
       return { success: false, error: 'posicio_invalid' }
     }
 
-    const placed = this.jugador.colocarRail(casella)
+    // NEU → via_nieve; AGUA (franqueable) → puente; PLA → rail normal
+    let placed
+    if (casella.tipus === TIPOS_CASILLA.NEU) {
+      placed = this.jugador.colocarViaNeu(casella)
+    } else if (casella.esFranqueable()) {
+      placed = this.jugador.colocarPuente(casella)
+    } else {
+      placed = this.jugador.colocarRail(casella)
+    }
+
     if (!placed) {
       return { success: false, error: 'no_pot_colocar' }
     }
@@ -43,13 +51,21 @@ export class Joc {
       return { success: true, victoria: true, estrelles: resultat.estrelles }
     }
 
-    // sin rails restantes: comprueba si todavía es posible obtener más
-    if (this.jugador.rails <= 0) {
-      const boscsRestants = this.mapa.contarTipus(TIPOS_CASILLA.BOSC)
-      const talesDisponibles = this.jugador.talesDisponibles
+    // derrota si no quedan recursos de colocación ni forma de conseguir más
+    const sinColoctació = this.jugador.rails <= 0
+      && this.jugador.puentes <= 0
+      && this.jugador.vias_nieve <= 0
 
-      // los obstáculos no generan rails al destruirse, solo los bosques talados
-      if (talesDisponibles <= 0 || boscsRestants === 0) {
+    if (sinColoctació) {
+      const potCraftarRail = this.jugador.madera >= 1 && this.jugador.piedra >= 1
+      const potCraftarPont = this.jugador.madera >= 2
+      const potCraftarNeu  = this.jugador.piedra >= 2
+      const boscsRestants  = this.mapa.contarTipus(TIPOS_CASILLA.BOSC)
+      const pedresRestants = this.mapa.contarTipus(TIPOS_CASILLA.PIEDRA)
+      const potRecollir    = (this.jugador.talesDisponibles > 0 && boscsRestants > 0)
+        || (this.jugador.destruccionsDisponibles > 0 && pedresRestants > 0)
+
+      if (!potCraftarRail && !potCraftarPont && !potCraftarNeu && !potRecollir) {
         const resultat = this.finalitzarPartida()
         return { success: true, derrota: true, estrelles: resultat.estrelles }
       }

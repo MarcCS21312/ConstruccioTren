@@ -6,7 +6,7 @@ import { UI_COLORS, UI_DEPTH, UI_STYLES } from '../constants/ui.js';
 import { HUD } from '../ui/HUD.js';
 
 // altura del panel HUD; debe coincidir con PANEL_ALT en HUD.js
-const HUD_H    = 82
+const HUD_H    = 110
 // margen mínimo entre el mapa y los bordes de pantalla
 const MARGE    = 12
 // tamaño máximo de celda; los mapas pequeños no crecen más
@@ -115,9 +115,12 @@ export class PlayScene extends Phaser.Scene {
       case TIPOS_CASILLA.BOSC:
         this.joc.jugador.talarArbre(casella)
         break
-      case TIPOS_CASILLA.OBSTACLE:
+      case TIPOS_CASILLA.PIEDRA:
         this.joc.jugador.destruirObstacle(casella)
         break
+      // Joc enruta internamente: NEU→via_nieve, AGUA→puente, PLA→rail
+      case TIPOS_CASILLA.NEU:
+      case TIPOS_CASILLA.AGUA:
       case TIPOS_CASILLA.PLA: {
         const resultat = this.joc.colocarRailEn(fila, columna)
         this.dibuixarMapa()

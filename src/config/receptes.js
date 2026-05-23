@@ -1,29 +1,27 @@
-import { TIPOS_CASILLA } from '../constants/tiposCasella.js'
-
 // las claves de ingredients y efecte coinciden con propiedades de Jugador
 export const RECEPTES = [
   {
-    id: 'destral_afilada',
-    nom: 'Hacha Afilada',
-    icona: '🪓',
-    descripcio: '+1 tala disponible',
-    ingredients: { rails: 2 },
-    efecte: { talesDisponibles: 1 }
-  },
-  {
-    id: 'pic_reforcat',
-    nom: 'Pico Reforzado',
-    icona: '⛏️',
-    descripcio: '+1 destrucción disponible',
-    ingredients: { rails: 2 },
-    efecte: { destruccionsDisponibles: 1 }
-  },
-  {
-    id: 'paquet_rails',
-    nom: 'Paquete de Vías',
+    id: 'via_normal',
+    nom: 'Vía Normal',
     icona: '🛤️',
-    descripcio: '+2 vías',
-    ingredients: { talesDisponibles: 1, destruccionsDisponibles: 1 },
-    efecte: { rails: 2 }
-  }
+    descripcio: 'construye 1 vía de tren',
+    ingredients: { madera: 1, piedra: 1 },
+    efecte: { rails: 1 }
+  },
+  {
+    id: 'puente',
+    nom: 'Puente de Madera',
+    icona: '🌉',
+    descripcio: 'permite construir sobre agua',
+    ingredients: { madera: 2 },
+    efecte: { puentes: 1 }
+  },
+  {
+    id: 'via_nieve',
+    nom: 'Vía de Nieve',
+    icona: '❄️',
+    descripcio: 'construye 1 vía sobre nieve',
+    ingredients: { piedra: 2 },
+    efecte: { vias_nieve: 1 }
+  },
 ]

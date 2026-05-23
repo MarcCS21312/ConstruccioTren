@@ -1,15 +1,15 @@
 import { TIPOS_CASILLA } from '../constants/tiposCasella.js'
 
 // tamaño de cuadrícula por dificultad (índice 0 = dif 1)
-const MIDES = [5, 7, 9, 12, 16]
+const MIDES = [5, 7, 9, 10, 12]
 
-// probabilidad de BOSC y OBSTACLE por dificultad; el resto del espacio es PLA
+// probabilidad base de BOSC y PIEDRA; dif 3-5 escala la zona izquierda x2
 const PROPORCIONS = [
-  { bosc: 0.08, obstacle: 0.05 },
   { bosc: 0.12, obstacle: 0.08 },
   { bosc: 0.16, obstacle: 0.11 },
   { bosc: 0.20, obstacle: 0.14 },
-  { bosc: 0.25, obstacle: 0.18 },
+  { bosc: 0.22, obstacle: 0.15 },
+  { bosc: 0.24, obstacle: 0.17 },
 ]
 
 // convierte string o número en entero de 32 bits para inicializar el PRNG
@@ -36,6 +36,19 @@ function crearPRNG(seed) {
   }
 }
 
+// convierte celdas PLA del área [col 2, colFi) a `tipus` hasta alcanzar el mínimo requerido
+function _completarRecursos(mapa, files, colFi, tipus, minim) {
+  let count = mapa.flat().filter(t => t === tipus).length
+  for (let f = 0; f < files && count < minim; f++) {
+    for (let c = 2; c < colFi && count < minim; c++) {
+      if (mapa[f][c] === TIPOS_CASILLA.PLA) {
+        mapa[f][c] = tipus
+        count++
+      }
+    }
+  }
+}
+
 /*
   Generador procedural de niveles por semilla.
   La misma combinación (seed, dificultad) siempre produce el mismo mapa y recursos.
@@ -47,9 +60,8 @@ export class GeneradorProcedural {
     seed: string o número. dificultad: entero 1-5.
   */
   generar(seed, dificultad) {
-    const dif  = Math.max(1, Math.min(5, Math.round(dificultad)))
-    const rand = crearPRNG(seed)
-
+    const dif      = Math.max(1, Math.min(5, Math.round(dificultad)))
+    const rand     = crearPRNG(seed)
     const mida     = MIDES[dif - 1]
     const files    = mida
     const columnes = mida
@@ -59,13 +71,35 @@ export class GeneradorProcedural {
     const iniciRow = Math.floor(rand() * files)
     const metaRow  = Math.floor(rand() * files)
 
+    // barrera vertical en la columna central (solo dif >= 3)
+    const usaBarrera  = dif >= 3
+    const colBarrera  = Math.floor(columnes / 2)
+    // dif3=agua, dif4=montanya, dif5=montanya con tramos de neu
+    const tipusBase   = dif === 3 ? TIPOS_CASILLA.AGUA : TIPOS_CASILLA.MONTANYA
+
+    // elige filas donde la barrera tiene un agujero (paso alternativo sin material especial)
+    const numAgujeros = dif >= 4 ? 2 : 1
+    const filesAgujero = new Set()
+    let intentos = 0
+    while (filesAgujero.size < numAgujeros && intentos < files * 10) {
+      const f = Math.floor(rand() * files)
+      if (f !== iniciRow && f !== metaRow) filesAgujero.add(f)
+      intentos++
+    }
+    // fallback: toma la primera fila disponible si el PRNG no encontró candidatas
+    if (filesAgujero.size === 0) {
+      for (let f = 0; f < files; f++) {
+        if (f !== iniciRow && f !== metaRow) { filesAgujero.add(f); break }
+      }
+    }
+
     // construye la cuadrícula celda a celda
     const mapaInicial = []
     for (let f = 0; f < files; f++) {
       const fila = []
       for (let c = 0; c < columnes; c++) {
         // posiciones fijas de inicio y meta
-        if (c === 0 && f === iniciRow)          { fila.push(TIPOS_CASILLA.INICI); continue }
+        if (c === 0 && f === iniciRow)           { fila.push(TIPOS_CASILLA.INICI); continue }
         if (c === columnes - 1 && f === metaRow) { fila.push(TIPOS_CASILLA.META);  continue }
 
         // vecinos inmediatos de INICI y META siempre PLA para evitar bloqueo en el primer paso
@@ -73,12 +107,32 @@ export class GeneradorProcedural {
         const esVeinaMeta  = c === columnes - 2 && f === metaRow
         if (esVeinaInici || esVeinaMeta) { fila.push(TIPOS_CASILLA.PLA); continue }
 
-        // resto: distribución probabilística según la dificultad
+        if (usaBarrera && c === colBarrera) {
+          if (filesAgujero.has(f)) {
+            // agujero: PLA para paso libre o PIEDRA para paso con pico (alterna por fila)
+            fila.push(f % 2 === 0 ? TIPOS_CASILLA.PLA : TIPOS_CASILLA.PIEDRA)
+          } else if (dif === 5 && rand() < 0.45) {
+            // dif5: parte de la barrera es NEU, cruzable crafteando una via_nieve
+            fila.push(TIPOS_CASILLA.NEU)
+          } else {
+            fila.push(tipusBase)
+          }
+          continue
+        }
+
+        if (usaBarrera && c > colBarrera) {
+          // lado derecho despejado: el reto está en cruzar la barrera, no en llegar a META
+          fila.push(TIPOS_CASILLA.PLA)
+          continue
+        }
+
+        // lado izquierdo (o mapa completo para dif 1-2): distribución probabilística
+        const escala = usaBarrera ? 2.0 : 1.0
         const r = rand()
-        if (r < prop.bosc) {
+        if (r < prop.bosc * escala) {
           fila.push(TIPOS_CASILLA.BOSC)
-        } else if (r < prop.bosc + prop.obstacle) {
-          fila.push(TIPOS_CASILLA.OBSTACLE)
+        } else if (r < (prop.bosc + prop.obstacle) * escala) {
+          fila.push(TIPOS_CASILLA.PIEDRA)
         } else {
           fila.push(TIPOS_CASILLA.PLA)
         }
@@ -86,28 +140,36 @@ export class GeneradorProcedural {
       mapaInicial.push(fila)
     }
 
-    // cuenta terrenos reales para dimensionar recursos tras la generación
-    const celdas        = mapaInicial.flat()
-    const boscCount     = celdas.filter(t => t === TIPOS_CASILLA.BOSC).length
-    const obstacleCount = celdas.filter(t => t === TIPOS_CASILLA.OBSTACLE).length
-
-    // distancia mínima en celdas PLA que necesitan rail para conectar INICI con META
-    // (columnas intermedias + desplazamiento vertical)
+    // distancia mínima de celdas intermedias entre INICI y META
     const distMin = (columnes - 2) + Math.abs(iniciRow - metaRow)
 
-    // margen del 40% sobre el mínimo para asegurar que el nivel es pasable
-    const railsInicials           = Math.ceil(distMin * 1.4)
-    const talesDisponibles        = Math.max(1, Math.ceil(boscCount * 0.4))
-    const destruccionsDisponibles = Math.max(1, Math.ceil(obstacleCount * 0.4))
+    // madera mínima: via_normal cuesta madera:1, puente cuesta madera:2 adicional
+    const maderaMin = dif === 3 ? distMin + 1         // (distMin-1) via_normal + 1 puente
+                    : dif === 5 ? Math.max(1, distMin - 1)  // (distMin-1) via_normal + 1 neu (sin madera)
+                    : distMin                          // solo via_normal en dif 1, 2 y 4
+
+    // piedra mínima: via_normal cuesta piedra:1, via_nieve cuesta piedra:2 adicional
+    const piedraMin = dif === 5 ? distMin + 1         // (distMin-1) via_normal + 1 via_nieve
+                    : dif === 3 ? Math.max(1, distMin - 1)  // puente no consume piedra
+                    : distMin                          // solo via_normal en dif 1, 2 y 4
+
+    // garantiza los recursos mínimos en la zona accesible antes de la barrera
+    const colFiRecursos = usaBarrera ? colBarrera : columnes - 1
+    _completarRecursos(mapaInicial, files, colFiRecursos, TIPOS_CASILLA.BOSC, maderaMin)
+    _completarRecursos(mapaInicial, files, colFiRecursos, TIPOS_CASILLA.PIEDRA, piedraMin)
+
+    // herramientas exactas para superar el camino mínimo más 1 de margen
+    const talesDisponibles        = maderaMin + 1
+    const destruccionsDisponibles = Math.max(1, piedraMin + 1)
 
     // umbrales de estrellas; llindar2 siempre al menos 2 acciones por encima de llindar3
     const llindar3 = distMin + 2
     const llindar2 = Math.max(llindar3 + 2, distMin + Math.ceil(distMin * 0.5))
 
     return {
-      nom: `Nivel S${seed}-D${dif}`,
+      nom:              `Nivel S${seed}-D${dif}`,
       mapaInicial,
-      railsInicials,
+      railsInicials:    0,
       llindarsEstrelles: [llindar3, llindar2],
       limitsAccions: {
         tales:        talesDisponibles,
