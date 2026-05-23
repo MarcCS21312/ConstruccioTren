@@ -38,16 +38,11 @@ export class Jugador {
     return true
   }
 
-  // colocar vía normal sobre PLA o PARADA; PARADA conserva un color distinto al confirmar la visita
+  // colocar vía normal sobre PLA; PARADA es un obstáculo impassable
   colocarRail(casella) {
     if (!casella || this.rails <= 0) return false
-    if (casella.tipus !== TIPOS_CASILLA.PLA && casella.tipus !== TIPOS_CASILLA.PARADA) {
-      return false
-    }
-    const nouTipus = casella.tipus === TIPOS_CASILLA.PARADA
-      ? TIPOS_CASILLA.RAIL_PARADA
-      : TIPOS_CASILLA.RAIL
-    casella.canviarTipus(nouTipus)
+    if (casella.tipus !== TIPOS_CASILLA.PLA) return false
+    casella.canviarTipus(TIPOS_CASILLA.RAIL)
     this.rails -= 1
     return true
   }

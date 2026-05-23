@@ -9,12 +9,11 @@ const DIRECCIONS = [
   [0, -1]
 ]
 
-// todas las variantes de RAIL son atravesables por el camino
+// terrenos atravesables por el camino (PARADA es obstáculo, no se incluye)
 const TIPUS_CONNEXOS = new Set([
   TIPOS_CASILLA.RAIL,
   TIPOS_CASILLA.RAIL_PUENTE,
   TIPOS_CASILLA.RAIL_NEU,
-  TIPOS_CASILLA.RAIL_PARADA,
   TIPOS_CASILLA.INICI,
   TIPOS_CASILLA.META,
 ])
@@ -71,14 +70,11 @@ export class Mapa {
     return comptador
   }
 
-  // BFS desde INICI; la victoria exige llegar a META y tener todas las PARADAs visitadas
+  // BFS desde INICI; la victoria exige llegar a META con el camino adyacente a todas las PARADAs
   comprovarCami() {
     const inici = this.trobarPosicio(TIPOS_CASILLA.INICI)
     const meta  = this.trobarPosicio(TIPOS_CASILLA.META)
     if (!inici || !meta) return false
-
-    // PARADAs sin convertir en RAIL_PARADA significa que aún faltan visitar
-    if (this.contarTipus(TIPOS_CASILLA.PARADA) > 0) return false
 
     const visitades = new Set()
     const cua = [inici]
@@ -99,14 +95,15 @@ export class Mapa {
       }
     }
 
-    // META alcanzable desde INICI
+    // META debe ser alcanzable desde INICI
     if (!visitades.has(`${meta.fila},${meta.columna}`)) return false
 
-    // todas las RAIL_PARADA deben estar conectadas al camino principal
+    // cada PARADA debe tener al menos una celda de vía adyacente en el camino
     for (let f = 0; f < this.mida.files; f++) {
       for (let c = 0; c < this.mida.columnes; c++) {
-        if (this.caselles[f][c].tipus === TIPOS_CASILLA.RAIL_PARADA) {
-          if (!visitades.has(`${f},${c}`)) return false
+        if (this.caselles[f][c].tipus === TIPOS_CASILLA.PARADA) {
+          const tocaCami = DIRECCIONS.some(([df, dc]) => visitades.has(`${f + df},${c + dc}`))
+          if (!tocaCami) return false
         }
       }
     }

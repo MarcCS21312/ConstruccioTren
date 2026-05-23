@@ -117,8 +117,7 @@ export class PlayScene extends Phaser.Scene {
       case TIPOS_CASILLA.PIEDRA:
         this.joc.jugador.destruirObstacle(casella)
         break
-      // Joc enruta internamente: NEU→via_nieve, AGUA→puente, PLA/PARADA→rail
-      case TIPOS_CASILLA.PARADA:
+      // Joc enruta internamente: NEU→via_nieve, AGUA→puente, PLA→rail
       case TIPOS_CASILLA.NEU:
       case TIPOS_CASILLA.AGUA:
       case TIPOS_CASILLA.PLA: {
