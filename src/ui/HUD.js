@@ -5,23 +5,24 @@ import { Button } from '../classes/Boto.js'
 export const PANEL_ALT = 68   // top bar height
 export const SIDE_W    = 112  // width of left/right side panels
 
-const MARGIN  = 14
-const BTN_W   = 46
-const BTN_H   = 36
-const BTN_GAP = 8
+const MARGIN      = 22
+const BTN_W       = 46
+const BTN_H       = 36
+const BTN_GAP     = 20   // separació entre botons
+const TOOL_SPACING = 90  // distància ±centre entre Pico i Hacha
 const LINE_H  = 28   // vertical spacing between lines in side panels
 const VPAD    = 6    // top/bottom inner padding for side panels
 const HPAD    = 10   // left inner padding for side panel text
 
 // three-zone HUD: top bar (tools + buttons), left panel (via counts), right panel (materials)
 export class HUD {
-  constructor(scene, { onPausa, onCrafteig } = {}) {
+  constructor(scene, { onPausa, onCrafteig, onGuia } = {}) {
     this.scene   = scene
     this._botons = []
-    this._crear(onPausa, onCrafteig)
+    this._crear(onPausa, onCrafteig, onGuia)
   }
 
-  _crear(onPausa, onCrafteig) {
+  _crear(onPausa, onCrafteig, onGuia) {
     const { width } = this.scene.scale
     const topCY = PANEL_ALT / 2
 
@@ -31,19 +32,19 @@ export class HUD {
       .setDepth(UI_DEPTH.HUD)
 
     const bPausaX = width - MARGIN - BTN_W / 2
-    const bCraftX = bPausaX - BTN_W - BTN_GAP
+    const bGuiaX  = bPausaX - BTN_W - BTN_GAP
+    const bCraftX = bGuiaX  - BTN_W - BTN_GAP
 
-    // tool labels centered in the space to the left of the buttons
+    // eines centrades a la zona lliure (entre el marge esquerre i el bloc de botons)
     const labelRight = bCraftX - BTN_W / 2 - MARGIN
     const lCenter    = (MARGIN + labelRight) / 2
-    const lSpacing   = Math.min((labelRight - MARGIN) / 3, 110)
 
     this.txtPico = this.scene.add
-      .text(lCenter - lSpacing / 2, topCY, '', { ...UI_STYLES.HUD_LABEL, color: UI_COLORS.HUD_PICO })
+      .text(lCenter - TOOL_SPACING, topCY, '', { ...UI_STYLES.HUD_LABEL, color: UI_COLORS.HUD_PICO })
       .setOrigin(0.5).setDepth(UI_DEPTH.HUD)
 
     this.txtDestral = this.scene.add
-      .text(lCenter + lSpacing / 2, topCY, '', { ...UI_STYLES.HUD_LABEL, color: UI_COLORS.HUD_TALES })
+      .text(lCenter + TOOL_SPACING, topCY, '', { ...UI_STYLES.HUD_LABEL, color: UI_COLORS.HUD_TALES })
       .setOrigin(0.5).setDepth(UI_DEPTH.HUD)
 
     if (onCrafteig) {
@@ -51,6 +52,12 @@ export class HUD {
       bCraft.container.setDepth(UI_DEPTH.HUD + 1)
       this._botons.push(bCraft)
       this._badge(bCraftX, topCY, BTN_H, '[C]')
+    }
+    if (onGuia) {
+      const bGuia = new Button(this.scene, bGuiaX, topCY, '📖', 0x0f766e, 0x14b8a6, onGuia, BTN_W, BTN_H)
+      bGuia.container.setDepth(UI_DEPTH.HUD + 1)
+      this._botons.push(bGuia)
+      this._badge(bGuiaX, topCY, BTN_H, '[G]')
     }
     if (onPausa) {
       const bPausa = new Button(this.scene, bPausaX, topCY, '⏸', 0x374151, 0x4b5563, onPausa, BTN_W, BTN_H)

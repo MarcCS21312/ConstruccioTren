@@ -49,6 +49,7 @@ export class PlayScene extends Phaser.Scene {
     this.hud = new HUD(this, {
       onPausa:    () => this.activarPausa(),
       onCrafteig: () => this.activarCrafteig(),
+      onGuia:     () => this.activarGuia(),
     })
     this.hud.actualitzar(this.joc.jugador)
 
@@ -58,6 +59,7 @@ export class PlayScene extends Phaser.Scene {
     // teclado: keyup (no keydown) para no encadenar el mismo evento entre escenas
     this.input.keyboard.on('keyup-ESC', () => this.activarPausa())
     this.input.keyboard.on('keyup-C',   () => this.activarCrafteig())
+    this.input.keyboard.on('keyup-G',   () => this.activarGuia())
   }
 
   activarPausa() {
@@ -73,6 +75,12 @@ export class PlayScene extends Phaser.Scene {
     if (this.joc.estat !== 'jugant') return
     this.scene.pause()
     this.scene.launch('CraftingScene')
+  }
+
+  activarGuia() {
+    if (this.scene.isActive('GuideScene')) return
+    this.scene.pause()
+    this.scene.launch('GuideScene')
   }
 
   dibuixarMapa() {
