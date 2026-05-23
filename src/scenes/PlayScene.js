@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { Joc, Nivell, TIPOS_CASILLA, GeneradorProcedural, Button } from '../classes/index.js';
+import { Joc, Nivell, TIPOS_CASILLA, Button } from '../classes/index.js';
 import { COLORS_CASELLA } from '../constants/colors.js';
 import { CAMPANA } from '../config/campana.js';
 import { UI_COLORS, UI_DEPTH, UI_STYLES } from '../constants/ui.js';
@@ -26,11 +26,10 @@ export class PlayScene extends Phaser.Scene {
   create() {
     this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x111111).setOrigin(0);
 
-    // genera el nivel con la semilla y dificultad asignadas al índice actual
-    const entrada = CAMPANA[this.nivelIndex]
-    const config  = new GeneradorProcedural().generar(entrada.semilla, entrada.dificultad)
-    this.nivell   = new Nivell(config)
-    this.joc      = new Joc().iniciarJoc(this.nivell)
+    // carga el nivel diseñado a mano según el índice de campaña
+    const config = CAMPANA[this.nivelIndex]
+    this.nivell  = new Nivell(config)
+    this.joc     = new Joc().iniciarJoc(this.nivell)
 
     // tamaño de celda dinámico: el mapa siempre cabe en pantalla independientemente del nivel
     const { files, columnes } = this.joc.mapa.mida
