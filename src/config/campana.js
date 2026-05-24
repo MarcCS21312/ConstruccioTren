@@ -86,6 +86,26 @@ export const CAMPANA = [
     llindarsEstrelles: [13, 16],
   },
 
+  {
+    nom: 'Testeo',
+    mapaInicial: [
+      [T, T, I, A, T, T, T, T, T],
+      [T, T, N, A, T, T, T, T, T],
+      [T, T, N, A, T, T, T, T, T],
+      [T, T, N, B, S, R, T, T, T],
+      [T, T, T, B, R, R, T, T, T],
+      [T, T, T, B, B, R, T, T, T],
+      [T, T, T, B, S, R, A, T, T],
+      [T, T, T, T, T, N, A, T, T],
+      [T, T, T, T, T, N, A, T, T],
+      [T, T, T, T, T, N, M, T, T],
+    ],
+    railsInicials: 2,
+    limitsAccions: { tales: 5, destruccions: 5 },
+    llindarsEstrelles: [20, 25],
+  },
+
+  
   // Nivel 5 (8x9): dos paradas opuestas, lago grande y zona de nieve
   // hay tres caminos aparentes; sólo uno toca ambas paradas con los recursos justos
   // los otros dos llegan a la meta pero sin parada (no es victoria)
@@ -105,4 +125,6 @@ export const CAMPANA = [
     limitsAccions: { tales: 2, destruccions: 5 },
     llindarsEstrelles: [18, 22],
   },
+
+  
 ]
