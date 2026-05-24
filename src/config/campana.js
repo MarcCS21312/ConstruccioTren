@@ -64,7 +64,28 @@ export const CAMPANA = [
     llindarsEstrelles: [14, 17],
   },
 
-  // Nivel 4 (7x8): Puzzle de economía exacta. Sin bosques → sin madera → sin vías ni puentes extra.
+  // Nivel 4 (10x9): dos paradas en columnas centrales, zona de agua vertical, nieve y bosques
+  // combina todas las mecánicas introducidas hasta ahora en un mapa más abierto
+  {
+    nom: 'Testeo',
+    mapaInicial: [
+      [T, T, I, A, T, T, T, T, T],
+      [T, T, N, A, T, T, T, T, T],
+      [T, T, N, A, T, T, T, T, T],
+      [T, T, N, B, S, R, T, T, T],
+      [T, T, T, B, R, R, T, T, T],
+      [T, T, T, B, B, R, T, T, T],
+      [T, T, T, B, S, R, A, T, T],
+      [T, T, T, T, T, N, A, T, T],
+      [T, T, T, T, T, N, A, T, T],
+      [T, T, T, T, T, N, M, T, T],
+    ],
+    railsInicials: 2,
+    limitsAccions: { tales: 5, destruccions: 5 },
+    llindarsEstrelles: [20, 25],
+  },
+
+  // Nivel 5 (7x8): puzzle de economía exacta. Sin bosques → sin madera → sin vías ni puentes extra.
   // Camino único forzado: 5 PLA (vías iniciales) + 6 NEU (vías de nieve fabricadas).
   // Economía justa: 6 piedras visibles × 2 = 12 unidades de piedra = 6 vías de nieve. Sin margen.
   // Cualquier vía normal o de nieve mal colocada → derrota irreversible.
@@ -84,7 +105,7 @@ export const CAMPANA = [
     llindarsEstrelles: [13, 15], 
   },
 
-  // Nivel 5 (8x9): Dos paradas opuestas, lago grande y zona de nieve.
+  // Nivel 6 (8x8): Dos paradas opuestas, lago grande y zona de nieve.
   // Hay tres caminos aparentes; solo uno toca ambas paradas con los recursos justos.
   // Los otros dos llegan a la meta, pero sin tocar las paradas (no es victoria).
   {
@@ -103,7 +124,7 @@ export const CAMPANA = [
     llindarsEstrelles: [13, 16],
   },
 
-  // Nivel 6 — "El Archipiélago Helado" (8x8)
+  // Nivel 7 — "El Archipiélago Helado" (8x8)
   // Introduce una falsa sensación de mundo abierto. Múltiples lagos y 
   // zonas nevadas que actúan como sumideros de recursos. Obliga a
   // encontrar el único camino serpenteante que cuadra la economía a cero.
