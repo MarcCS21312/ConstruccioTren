@@ -11,9 +11,6 @@ const N = TIPOS_CASILLA.NEU
 const T = TIPOS_CASILLA.MONTANYA
 const S = TIPOS_CASILLA.PARADA
 
-// 5 niveles con dificultad progresiva
-// niveles 1-2: el reto está en elegir bien qué destruir y qué construir
-// niveles 3-5: múltiples rutas falsas con costes distintos (estrellas o derrota)
 export const CAMPANA = [
 
   // Nivel 1 (5x7): dos rutas posibles. la corta requiere romper obstáculos exactos
@@ -57,8 +54,8 @@ export const CAMPANA = [
       [T, T, T, T, T, T, T, T],
       [I, o, o, o, o, o, o, T],
       [T, o, T, T, T, T, o, T],
-      [T, o, T, A, A, A, o, T],
-      [T, o, T, A, A, A, o, T],
+      [T, A, A, A, A, A, o, T],
+      [T, A, A, A, A, A, o, T],
       [T, o, T, T, T, T, o, T],
       [T, B, o, R, B, R, o, M],
     ],
@@ -67,25 +64,8 @@ export const CAMPANA = [
     llindarsEstrelles: [14, 17],
   },
 
-  // Nivel 4 (7x8): zona central de nieve con piedras dentro, sin bosques
-  // los rails normales son los que arrancas, el resto son vías de nieve
-  // crafteadas con piedra. picar la piedra equivocada te deja sin material
-  {
-    nom: 'Glaciar',
-    mapaInicial: [
-      [T, T, T, T, T, T, T, T],
-      [I, o, o, T, T, T, T, T],
-      [T, T, N, N, N, N, T, T],
-      [T, N, N, R, R, N, T, T],
-      [T, N, R, N, N, R, N, T],
-      [T, T, N, N, N, N, o, T],
-      [T, T, T, T, T, o, o, M],
-    ],
-    railsInicials: 5,
-    limitsAccions: { tales: 0, destruccions: 4 },
-    llindarsEstrelles: [13, 16],
-  },
-
+  // Nivel 4 (10x9): dos paradas en columnas centrales, zona de agua vertical, nieve y bosques
+  // combina todas las mecánicas introducidas hasta ahora en un mapa más abierto
   {
     nom: 'Testeo',
     mapaInicial: [
@@ -105,26 +85,63 @@ export const CAMPANA = [
     llindarsEstrelles: [20, 25],
   },
 
-  
-  // Nivel 5 (8x9): dos paradas opuestas, lago grande y zona de nieve
-  // hay tres caminos aparentes; sólo uno toca ambas paradas con los recursos justos
-  // los otros dos llegan a la meta pero sin parada (no es victoria)
+  // Nivel 5 (7x8): puzzle de economía exacta. Sin bosques → sin madera → sin vías ni puentes extra.
+  // Camino único forzado: 5 PLA (vías iniciales) + 6 NEU (vías de nieve fabricadas).
+  // Economía justa: 6 piedras visibles × 2 = 12 unidades de piedra = 6 vías de nieve. Sin margen.
+  // Cualquier vía normal o de nieve mal colocada → derrota irreversible.
   {
-    nom: 'El infierno',
+    nom: 'Glaciar',
     mapaInicial: [
-      [T, T, T, T, T, T, T, T, T],
-      [I, o, o, o, o, T, B, R, T],
-      [T, o, T, T, o, T, T, T, T],
-      [T, S, o, T, o, A, A, o, T],
-      [T, T, o, T, o, A, A, o, T],
-      [T, o, o, o, o, T, T, o, T],
-      [T, o, T, T, T, T, N, S, T],
-      [T, o, o, o, o, o, N, o, M],
+      [T, T, T, T, T, T, T, T],
+      [I, N, N, N, N, N, N, T], 
+      [T, o, R, N, N, N, N, T], 
+      [T, o, N, N, N, R, N, T], 
+      [T, o, R, o, R, N, N, T], 
+      [T, o, o, o, o, N, M, T], 
+      [T, T, T, T, T, T, T, T],
     ],
-    railsInicials: 8,
-    limitsAccions: { tales: 2, destruccions: 5 },
-    llindarsEstrelles: [18, 22],
+    railsInicials: 5,
+    limitsAccions: { tales: 0, destruccions: 4 },
+    llindarsEstrelles: [13, 15], 
   },
 
-  
+  // Nivel 6 (8x8): Dos paradas opuestas, lago grande y zona de nieve.
+  // Hay tres caminos aparentes; solo uno toca ambas paradas con los recursos justos.
+  // Los otros dos llegan a la meta, pero sin tocar las paradas (no es victoria).
+  {
+    nom: 'Espejismo',
+    mapaInicial: [
+      [T, T, T, T, T, T, T, T],
+      [T, I, o, A, N, o, o, T],
+      [T, B, N, o, A, R, N, T],
+      [T, A, N, R, o, N, A, T],
+      [T, R, N, o, N, o, o, T],
+      [T, o, B, A, N, A, M, T],
+      [T, T, T, T, T, T, T, T],
+    ],
+    railsInicials: 3,
+    limitsAccions: { tales: 2, destruccions: 3 },
+    llindarsEstrelles: [13, 16],
+  },
+
+  // Nivel 7 — "El Archipiélago Helado" (8x8)
+  // Introduce una falsa sensación de mundo abierto. Múltiples lagos y 
+  // zonas nevadas que actúan como sumideros de recursos. Obliga a
+  // encontrar el único camino serpenteante que cuadra la economía a cero.
+  {
+    nom: 'El Archipiélago',
+    mapaInicial: [
+      [T, T, T, T, T, T, T, T],
+      [T, I, N, N, N, N, B, B],
+      [T, o, A, T, S, N, T, B], 
+      [T, o, o, A, o, T, T, T],
+      [T, A, A, T, o, T, M, T],
+      [T, A, R, T, N, T, o, T], 
+      [T, R, R, T, o, N, A, T], 
+      [T, T, T, T, T, T, T, T],
+    ],
+    railsInicials: 5,
+    limitsAccions: { tales: 3, destruccions: 3 },
+    llindarsEstrelles: [17, 20],
+  }
 ]
